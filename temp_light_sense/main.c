@@ -4,10 +4,19 @@
 #include<err.h>
 #include<errno.h>
 
-#include<linux/i2c-dev.h>
-#include<i2c/smbus.h>
+#include<string.h>
 
-int bus_number = 3;
+#include<linux/i2c-dev.h>
+#include<linux/i2c.h>
+
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<unistd.h>
+
+#include<sys/ioctl.h>
+
+int bus_number = 2;
 
 int main()
 {
@@ -15,12 +24,13 @@ int main()
 	char filename[20];
 	int i2c_bus_desc;
 	int retval, regaddr;
+	char buf[10];
 
 	regaddr = 0x52;
 
-	filename = sprintf(filename, "/dev/i2c-%d", bus_number);	
+	sprintf(filename, "/dev/i2c-%d", bus_number);	
 	i2c_bus_desc = open(filename, O_RDWR);
-	if(i2_bus_desc < 0)
+	if(i2c_bus_desc < 0)
 	{
 		printf("Error opening a i2c character device file: %s", strerror(errno));
 		return 1;
@@ -33,7 +43,12 @@ int main()
 		return 1;
 	}
 
-	i2c_smbus_write_word_data(i2c_bus_desc, 0x52);
+//	i2c_smbus_write_word_data(i2c_bus_desc, 0x52, 55);
+
+	buf[0] =  0x72;
+	buf[1] = 0xFF;
+
+	write(i2c_bus_desc, buf, 2);
 
 	close(i2c_bus_desc);
 
