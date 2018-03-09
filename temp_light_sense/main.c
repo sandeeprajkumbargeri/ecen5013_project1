@@ -36,7 +36,7 @@ int main()
 		return 1;
 	}
 
-	retval = ioctl(i2c_bus_desc, I2C_SLAVE, 0x75);
+	retval = ioctl(i2c_bus_desc, I2C_SLAVE, 0x39);
 	if(retval < 0)
 	{
 		printf("Error accessing I2C slave device; %s", strerror(errno));
@@ -45,11 +45,27 @@ int main()
 
 //	i2c_smbus_write_word_data(i2c_bus_desc, 0x52, 55);
 
-	buf[0] =  0x72;
+	buf[0] =  0x00|0x80;
 	buf[1] = 0xFF;
 
-	write(i2c_bus_desc, buf, 2);
+	retval = write(i2c_bus_desc, buf, 2);
 
+        if(retval < 0)
+        {
+        	printf("Error writing I2C slave device; %s", strerror(errno));
+                return 1;
+        }
+
+
+	retval = read(i2c_bus_desc, buf, 1);
+
+        if(retval < 0)
+        {
+        	printf("Error reading from I2C slave device; %s", strerror(errno));
+                return 1;
+        }
+
+	printf("\n\n%d", (int )buf[1]);
 	close(i2c_bus_desc);
 
 	return 0;
