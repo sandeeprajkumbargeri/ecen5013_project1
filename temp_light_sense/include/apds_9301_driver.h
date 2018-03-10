@@ -1,6 +1,8 @@
 #ifndef __APDS_9301_DRIVER_H
 #define __APDS_9301_DRIVER_H
 
+#include <stdint.h>
+
 #define SLAVE_ADDRESS_FLOAT 0x39
 #define SLAVE_ADDRESS_HIGH 0x49
 #define SLAVE_ADDRESS_LOW 0x29
@@ -27,12 +29,16 @@
 #define INTERRUPT_CLEAR 0x40
 
 #define POWER_UP 0x03
+#define POWER_DOWN 0x00
 #define INTEGRATION_TIME 0x01
 #define GAIN_MODE 0x10
 
+#define ADC_CHANNEL_0 0
+#define ADC_CHANNEL_1 1
+
 int apds_9301_init(int i2c_bus_desc);
-
-
+int apds_9301_shutdown(int i2c_bus_desc);
+uint16_t apds_9301_read_adcn(int i2c_bus_desc, int adc_channel_number);
 
 
 
