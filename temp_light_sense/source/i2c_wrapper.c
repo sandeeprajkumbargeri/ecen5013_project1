@@ -13,7 +13,7 @@
 #include<string.h>
 #include<pthread.h>
 
-#include "i2c_wrapper.h"
+#include "../include/i2c_wrapper.h"
 
 extern pthread_mutex_t bus_mutex;
 

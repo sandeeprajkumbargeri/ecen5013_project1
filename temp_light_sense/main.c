@@ -16,7 +16,7 @@
 
 #include<sys/ioctl.h>
 
-#include "i2c_wrapper.h"
+#include "include/i2c_wrapper.h"
 
 int bus_number = 2;
 
@@ -50,7 +50,7 @@ int main()
 	buf[0] =  0x00|0x80;   //Sending a command byte saying i want to access address 0x00 register
 	buf[1] = 0x03;         //Data being written
 
-	retval = i2c_bus_write(i2c_bus_desc, buf, buf+1, 1);   
+	retval = i2c_bus_write(i2c_bus_desc, buf[0], buf+1, 1);   
 
         if(retval < 0)
         {
@@ -59,7 +59,7 @@ int main()
         }
 
 
-	retval = i2c_bus_read(i2c_bus_desc, buf, buf, 1);
+	retval = i2c_bus_read(i2c_bus_desc, buf[0], buf, 1);
 
         if(retval < 0)
         {
