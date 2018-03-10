@@ -12,7 +12,6 @@ int apds_9301_init(int i2c_bus_desc)
 
 	buf[0] = COMMAND_BYTE|CONTROL_REGISTER;
 	buf[1] = POWER_UP;
-//	buf[1] = POWER_UP;
 
 	i2c_bus_access(i2c_bus_desc, SLAVE_ADDRESS);
 	retval = i2c_bus_write(i2c_bus_desc, buf[0], buf+1, 1);

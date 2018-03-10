@@ -6,6 +6,8 @@
 
 pthread_mutex_t bus_mutex;
 
+pthread_mutex_t bus;
+
 extern inline int i2c_bus_init(int bus_number);
 extern inline int i2c_bus_access(int i2c_bus_desc, uint8_t slave_address);
 extern inline void i2c_bus_free();

@@ -26,7 +26,7 @@
 #define WORD_MODE 0x20
 #define INTERRUPT_CLEAR 0x40
 
-#define POWER_UP 0x03`
+#define POWER_UP 0x03
 #define INTEGRATION_TIME 0x01
 #define GAIN_MODE 0x10
 

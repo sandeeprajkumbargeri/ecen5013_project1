@@ -17,6 +17,7 @@
 #include<sys/ioctl.h>
 
 #include "include/i2c_wrapper.h"
+#include "include/apds_9301_driver.h"
 
 int bus_number = 2;
 
@@ -38,6 +39,8 @@ int main()
 		return 1;
 	}
 
+	apds_9301_init(i2c_bus_desc);
+/*
 	retval = i2c_bus_access(i2c_bus_desc, 0x39);
 
 	if(retval < 0)
@@ -67,7 +70,7 @@ int main()
                 return 1;
         }
 
-	printf("\n\n%d\n", (int )buf[1]);
+	printf("\n\n%d\n", (int )buf[1]);*/
 	close(i2c_bus_desc);
 
 	return 0;
