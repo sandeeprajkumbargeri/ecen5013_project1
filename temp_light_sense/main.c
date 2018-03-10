@@ -16,6 +16,8 @@
 
 #include<sys/ioctl.h>
 
+#include "i2c_wrapper.h"
+
 int bus_number = 2;
 
 int main()
@@ -28,27 +30,27 @@ int main()
 
 	regaddr = 0x52;
 
-	sprintf(filename, "/dev/i2c-%d", bus_number);	
-	i2c_bus_desc = open(filename, O_RDWR);
+	i2c_bus_desc = i2c_bus_init(bus_number);
+
 	if(i2c_bus_desc < 0)
 	{
 		printf("Error opening a i2c character device file: %s", strerror(errno));
 		return 1;
 	}
 
-	retval = ioctl(i2c_bus_desc, I2C_SLAVE, 0x39);
+	retval = i2c_bus_access(i2c_bus_desc, 0x39);
+
 	if(retval < 0)
 	{
 		printf("Error accessing I2C slave device; %s", strerror(errno));
 		return 1;
 	}
 
-//	i2c_smbus_write_word_data(i2c_bus_desc, 0x52, 55);
 
-	buf[0] =  0x00|0x80;
-	buf[1] = 0xFF;
+	buf[0] =  0x00|0x80;   //Sending a command byte saying i want to access address 0x00 register
+	buf[1] = 0x03;         //Data being written
 
-	retval = write(i2c_bus_desc, buf, 2);
+	retval = i2c_bus_write(i2c_bus_desc, buf, buf+1, 1);   
 
         if(retval < 0)
         {
@@ -57,7 +59,7 @@ int main()
         }
 
 
-	retval = read(i2c_bus_desc, buf, 1);
+	retval = i2c_bus_read(i2c_bus_desc, buf, buf, 1);
 
         if(retval < 0)
         {
@@ -65,7 +67,7 @@ int main()
                 return 1;
         }
 
-	printf("\n\n%d", (int )buf[1]);
+	printf("\n\n%d\n", (int )buf[1]);
 	close(i2c_bus_desc);
 
 	return 0;

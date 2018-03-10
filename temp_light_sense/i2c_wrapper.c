@@ -1,4 +1,3 @@
-#include "i2c_wrapper.h"
 #include<sys/types.h>
 #include<sys/stat.h>
 #include<fcntl.h>
@@ -10,12 +9,19 @@
 #include<sys/ioctl.h>
 
 #include<stdio.h>
+#include<stdint.h>
 #include<string.h>
+#include<pthread.h>
+
+#include "i2c_wrapper.h"
+
+extern pthread_mutex_t bus_mutex;
 
 inline int i2c_bus_init(int bus_number)
 {
 	int i2c_bus_desc;
 	char filename[20];
+
 
         sprintf(filename, "/dev/i2c-%d", bus_number);
         i2c_bus_desc = open(filename, O_RDWR);
@@ -35,7 +41,7 @@ inline void i2c_bus_free()
 	pthread_mutex_unlock(&bus_mutex);
 }
 
-size_t i2c_bus_write(int i2c_bus_desc, uint8_t register_address, char * buffer, size_t length)
+size_t i2c_bus_write(int i2c_bus_desc, uint8_t register_address,  char * buffer, size_t length)
 {
 	char buf[length+1];
 	int retval;
