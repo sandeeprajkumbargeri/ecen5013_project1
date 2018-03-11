@@ -41,25 +41,38 @@ inline void i2c_bus_free()
 	pthread_mutex_unlock(&bus_mutex);
 }
 
-size_t i2c_bus_write(int i2c_bus_desc, uint8_t register_address,  char * buffer, size_t length)
+size_t i2c_bus_write(int i2c_bus_desc, uint8_t register_address,  uint8_t *buffer, size_t length)
 {
-	char buf[length+1];
+	uint8_t buf[length+1];
 	int retval;
 
-	sprintf(buf, "%c%s", (char )register_address, buffer);
+	bzero(buf, sizeof(buf));
+
+	buf[0] = register_address;
+
+	memcpy(buf+1, buffer, length);
+
+	//sprintf(buf+1, "%s", buffer);
 
 	retval = write(i2c_bus_desc, buf, length+1);
 	return --retval;
 }
 
-size_t i2c_bus_read(int i2c_bus_desc, uint8_t register_address, char * buffer, size_t length)
+size_t i2c_bus_read(int i2c_bus_desc, uint8_t register_address, uint8_t* buffer, size_t length)
 {
-	char buf[length];
+	uint8_t buf[length];
 	int retval;
 
 	bzero(buf, sizeof(buf));
 
-	buf[0] = (char )register_address;
+	buf[0] = register_address;
+	retval = write(i2c_bus_desc, buf, 1);
+	
+	if(retval < 0)
+	{
+		perror("Error while reading contents");
+	}
+
 	retval = read(i2c_bus_desc, buf, length);
 
 	memcpy(buffer, buf, length);

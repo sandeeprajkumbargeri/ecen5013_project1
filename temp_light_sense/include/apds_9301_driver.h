@@ -30,8 +30,8 @@
 
 #define POWER_UP 0x03
 #define POWER_DOWN 0x00
-#define INTEGRATION_TIME 0x01
-#define GAIN_MODE 0x10
+#define INTEGRATION_TIME 0x02
+#define GAIN_MODE 0x00
 
 #define ADC_CHANNEL_0 0
 #define ADC_CHANNEL_1 1
@@ -39,7 +39,7 @@
 int apds_9301_init(int i2c_bus_desc);
 int apds_9301_shutdown(int i2c_bus_desc);
 uint16_t apds_9301_read_adcn(int i2c_bus_desc, int adc_channel_number);
-
+float calculate_ambient_lux(uint16_t adc_channel_out0, uint16_t adc_channel_out1);
 
 
 #endif
