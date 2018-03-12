@@ -24,7 +24,9 @@ int bus_number = 2;
 
 int main()
 {
-	uint16_t word, adc0, adc1;
+	uint16_t word;
+	int32_t adc0, adc1;
+	int16_t timing_reg, control_reg, id_reg, thresh_low_reg, thresh_high_reg;
 	char filename[20];
 	int i2c_bus_desc;
 	int retval, regaddr;
@@ -33,13 +35,6 @@ int main()
 	float ambient_lux;
 
 	regaddr = 0x52;
-
-/*	retval = i2c_bus_read(i2c_bus_desc, 0x01|0x80, buf, 1);
-	if(retval < 0)
-	{
-		printf("Errror reading contents of timing register");
-	}
-	printf("\n%hhu", buf[0]);*/
 
 	i2c_bus_desc = i2c_bus_init(bus_number);
 
@@ -72,9 +67,17 @@ int main()
 	//usleep(1000000);
 //	}
 
-	ambient_lux = calculate_ambient_lux(adc0, adc1);
+	ambient_lux = calculate_ambient_lux((uint16_t)adc0, (uint16_t)adc1);
 
 	printf("The Ambient Light is lux is %f", ambient_lux);
+
+	printf("\nTiming Register:%02x", (uint8_t )apds_9301_read_timing_reg(i2c_bus_desc));
+
+	printf("\n Control Register: %02x", (uint8_t)apds_9301_read_control_reg(i2c_bus_desc));
+
+	printf("\n Id Register: %02x", (uint8_t)apds_9301_read_id_reg(i2c_bus_desc));
+	printf("\n Threshold Low Register: %04x", (uint16_t)apds_9301_read_thresh_low_reg(i2c_bus_desc));
+	printf("\n Threshold High Register: %04x", (uint16_t)apds_9301_read_thresh_high_reg(i2c_bus_desc));
 
 	apds_9301_shutdown(i2c_bus_desc);
 	

@@ -29,54 +29,6 @@ int apds_9301_init(int i2c_bus_desc)
 	timing_reg_data = INTEGRATION_TIME|GAIN_MODE;
 	apds_9301_write_timing_reg(i2c_bus_desc, timing_reg_data);
 
-
-/*        buf[0] = COMMAND_BYTE|CONTROL_REGISTER;
-        buf[1] = POWER_UP;
-
-        retval = i2c_bus_write(i2c_bus_desc, buf[0], buf+1, 1);
-
-        if(retval < 0)
-        {
-                printf("Error powering up the Light Sensor: APDS 9301 %s", strerror(errno));
-                return 1;
-        }
-
-        retval = i2c_bus_read(i2c_bus_desc, buf[0], buf, 1);
-
-        if(retval < 0)
-        {
-                printf("Error reading from I2C slave device; %s", strerror(errno));
-                return 1;
-        }
-
-
-        printf("\n%hhu\n",  buf[0]);
-
-
-       	buf[0] = COMMAND_BYTE|TIMING_REGISTER;
-	buf[1] = INTEGRATION_TIME|GAIN_MODE;
-
-	retval = i2c_bus_write(i2c_bus_desc, buf[0], buf+1, 1);
-
-	if(retval < 0)
-	{
-		printf("Error setting the Integration Time and Gain mode %s", strerror(errno));
-		return 1;
-	}
-
-        retval = i2c_bus_read(i2c_bus_desc, buf[0], buf, 1);
-
-        if(retval < 0)
-        {
-                printf("Error reading from I2C slave device; %s", strerror(errno));
-                return 1;
-        }
-
-
-        printf("\n%hhu\n", buf[0]);
-
-// 	apds_9301_read_adcn(i2c_bus_desc,0);
-*/
 	i2c_bus_free();
 	return 0;
 }
@@ -241,7 +193,6 @@ int32_t apds_9301_read_thresh_low_reg(int i2c_bus_desc)
         uint8_t buf[2];
 
         buf[0] = COMMAND_BYTE|THRESHLOWLOW_REGISTER|WORD_MODE;                 //Selects ADC0 if adc_number is 0 ad ADC1 if adc_number is 1
-
         retval = i2c_bus_read(i2c_bus_desc, buf[0], buf, 2);
         if(retval < 0)
         {
@@ -329,15 +280,6 @@ int32_t apds_9301_read_adcn(int i2c_bus_desc, int adc_channel_number)
 	
 	printf("Address of ADC%d register %hhu", adc_channel_number, buf[0]);
 
-	retval = i2c_bus_access(i2c_bus_desc, SLAVE_ADDRESS);
-
-	usleep(1000000);
-
-	if(retval < 0)
-	{
-		printf("\nError accessing I2C Slave Device %s", strerror(errno));
-	}
-
 	adcn_channel_out = i2c_bus_read(i2c_bus_desc, buf[0], buf, 2);
 	if(adcn_channel_out < 0)
 	{
@@ -349,7 +291,6 @@ int32_t apds_9301_read_adcn(int i2c_bus_desc, int adc_channel_number)
 
 	adcn_channel_out = (uint16_t)buf[0] + (uint16_t)buf[1]<<8;     //Calculates ADC channel output using ADC Data Low Register and ADC Data High Register
 
-	i2c_bus_free();
 	return adcn_channel_out;
 }
 

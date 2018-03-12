@@ -30,8 +30,8 @@
 
 #define POWER_UP 0x03
 #define POWER_DOWN 0x00
-#define INTEGRATION_TIME 0x02
-#define GAIN_MODE 0x00
+#define INTEGRATION_TIME 0x01
+#define GAIN_MODE 0x10
 
 #define ADC_CHANNEL_0 0
 #define ADC_CHANNEL_1 1
