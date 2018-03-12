@@ -21,7 +21,7 @@
 #include "include/apds_9301_driver.h"
 
 int bus_number = 2;
-
+/*
 int main()
 {
 	uint16_t word;
@@ -112,9 +112,49 @@ int main()
         }
 
 	printf("\n\n%d\n", (int )buf[1]);*/
-	close(i2c_bus_desc);
+/*	close(i2c_bus_desc);
 
 	return 0;
 	
 }
+*/
 
+#include "include/tmp_102_driver.h"
+int main()
+{
+
+	int i2c_bus_desc, retval;
+	uint16_t config_write, config_read;
+	float temperature;
+
+	config_write = 0;
+
+	config_read = 150;
+
+        i2c_bus_desc = i2c_bus_init(bus_number);
+
+        if(i2c_bus_desc < 0)
+        {
+                printf("Error opening a i2c character device file: %s", strerror(errno));
+                return 1;
+        }
+
+
+	tmp_102_write_config_reg(i2c_bus_desc, config_write);
+	tmp_102_read_config_reg(i2c_bus_desc, &config_read);
+
+	printf("The config register is %04x It is written as %04x", config_write, config_read);
+
+	tmp_102_init(i2c_bus_desc);
+
+
+        i2c_bus_desc = i2c_bus_init(bus_number);
+
+	tmp_102_read_temperature_reg(i2c_bus_desc, &temperature);
+	if(retval > 0)
+	{
+		printf("The temperature is %f", temperature);
+	}
+
+	return 0;
+}
