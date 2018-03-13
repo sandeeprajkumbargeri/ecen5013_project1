@@ -1,26 +1,30 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdint.h>
-#include<err.h>
-#include<errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <err.h>
+#include <errno.h>
 
-#include<string.h>
+#include <string.h>
 
-#include<linux/i2c-dev.h>
-#include<linux/i2c.h>
+#include <linux/i2c-dev.h>
+#include <linux/i2c.h>
 
-#include<sys/types.h>
-#include<sys/stat.h>
-#include<fcntl.h>
-#include<unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <time.h>
 #include <math.h>
-#include<sys/ioctl.h>
+#include <sys/ioctl.h>
+
+#include <pthread.h>
+#include <semaphore.h>
+
 
 #include "include/i2c_wrapper.h"
 #include "include/apds_9301_driver.h"
 
-int bus_number = 2;
+//int bus_number = 2;
 /*
 int main()
 {
@@ -47,14 +51,14 @@ int main()
 	apds_9301_init(i2c_bus_desc);
 	usleep(100000);
 //	while(1)
-//	{	
+//	{
 	adc0 = apds_9301_read_adcn(i2c_bus_desc, ADC_CHANNEL_0);
 
 	if(adc0 < 0)
 	{
 		printf("Error in reading ADC Channel 0 register\n");
 	}
-	else 
+	else
 		printf("Output of ADC Channel 0:%d\n", (int)adc0);
 
 	adc1 = apds_9301_read_adcn(i2c_bus_desc, ADC_CHANNEL_1);
@@ -80,7 +84,7 @@ int main()
 	printf("\n Threshold High Register: %04x", (uint16_t)apds_9301_read_thresh_high_reg(i2c_bus_desc));
 
 	apds_9301_shutdown(i2c_bus_desc);
-	
+
 
 /*	retval = i2c_bus_access(i2c_bus_desc, 0x39);
 
@@ -94,7 +98,7 @@ int main()
 	buf[0] =  0x01|0x80;   //Sending a command byte saying i want to access address 0x00 register
 	buf[1] = 0x03;         //Data being written
 
-	retval = i2c_bus_read(i2c_bus_desc, buf[0], buf, 1);   
+	retval = i2c_bus_read(i2c_bus_desc, buf[0], buf, 1);
 
         if(retval < 0)
         {
@@ -115,11 +119,11 @@ int main()
 /*	close(i2c_bus_desc);
 
 	return 0;
-	
+
 }
 */
 
-#include "include/tmp_102_driver.h"
+/*#include "include/tmp_102_driver.h"
 int main()
 {
 
@@ -157,4 +161,25 @@ int main()
 	}
 
 	return 0;
+}*/
+
+pthread_t logger_task;
+pthread_t temp_sense_task;
+pthread_t light_sense_task;
+pthread_t sock_comm_task;
+
+typedef pthread_args
+{
+
+} pthread_args_t;
+
+int void main(void)
+{
+	pthread_args_t thread_args;
+
+	pthread_create(&logger_task, NULL, logger_task_thread, (void *) &thread_args);
+	pthread_create(&temp_sense_task, NULL, temp_sense_task_thread, (void *) &thread_args);
+	pthread_create(&light_sense_task, NULL, light_sense_task_thread, (void *) &thread_args);
+	pthread_create(&sock_comm_task, NULL, sock_comm_task_thread, (void *) &thread_args);
+
 }
