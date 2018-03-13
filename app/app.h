@@ -8,6 +8,7 @@
 #include <sys/un.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <sys/signal.h>
 
 #define TOTAL_COMMANDS          4
 
@@ -20,4 +21,5 @@
 
 
 void errExit(char *);
+void signal_handler(int);
 unsigned char parse_command(unsigned char* input);
