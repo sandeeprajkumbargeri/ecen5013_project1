@@ -50,7 +50,6 @@ int apds_9301_write_thresh_low_reg(int i2c_bus_desc, uint16_t thresh_low_reg);
 int32_t apds_9301_read_thresh_high_reg(int i2c_bus_desc);
 int apds_9301_write_thresh_high_reg(int i2c_bus_desc, uint16_t thresh_high_reg);
 int32_t apds_9301_read_adcn(int i2c_bus_desc, int adc_channel_number);
-float calculate_ambient_lux(uint16_t adc_channel_out0, uint16_t adc_channel_out1);
 
 
 #endif
