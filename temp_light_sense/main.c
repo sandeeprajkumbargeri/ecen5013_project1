@@ -23,6 +23,7 @@
 
 #include "include/i2c_wrapper.h"
 #include "include/apds_9301_driver.h"
+#include "include/tmp_102_driver.h"
 #include "include/light_sense_task.h"
 #include "include/temp_sense_task.h"
 
@@ -152,7 +153,7 @@ int GPIO_Interrupt_Setup()
 		retval = write(gpio_desc, buf, strlen(buf));
 		return -1;
 	}
-	
+
 	bzero(buf, sizeof(buf));
 
 	sprintf(buf, "/sys/class/gpio/gpio%d/direction", GPIO_INTERRUPT_PIN);
