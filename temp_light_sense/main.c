@@ -289,12 +289,12 @@ pthread_t temp_sense_task;
 pthread_t light_sense_task;
 pthread_t sock_comm_task;
 
-typedef pthread_args
+typedef struct
 {
-
+	int32_t data;
 } pthread_args_t;
 
-int void main(void)
+int main(void)
 {
 	pthread_args_t thread_args;
 
