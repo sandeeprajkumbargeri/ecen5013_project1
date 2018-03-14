@@ -11,20 +11,12 @@
 
 int tmp_102_init(int i2c_bus_desc)
 {
-        uint8_t buf[2];
-        int retval;
+    uint8_t buf[2];
+    uint16_t config_reg;
 
-        uint16_t config_reg;
 
-        retval = i2c_bus_access(i2c_bus_desc, SLAVE_ADDRESS_TMP);
-        if(retval < 0)
-        {
-                printf("Error accessing I2C slave device: %s", strerror(errno));
-                return 1;
-        }
-
-        buf[0] = INTERRUPT_MODE|FAULT_QUEUE_COUNT;
-	buf[1] = CONVERSION_RATE;
+    buf[0] = INTERRUPT_MODE|FAULT_QUEUE_COUNT;
+	   buf[1] = CONVERSION_RATE;
 
 	config_reg = (buf[0]<<8) + (buf[1]);
 
@@ -56,7 +48,7 @@ int tmp_102_read_temperature_reg(int i2c_bus_desc, float *temperature)
 	}
 	else
 		buf[0] = (buf[0]&0x70)>>4;
-		
+
 	*temp_ptr = (uint16_t) (buf[1]) + (uint16_t)(buf[0]<<8);
 
 	*temperature = temp_reg_dig_fmt*RESOLUTION;
@@ -78,7 +70,7 @@ int tmp_102_read_config_reg(int i2c_bus_desc, uint16_t *config_reg)
 	*config_reg = (buf[0] << 8) + buf[1];
 
         return retval;
-	
+
 }
 int tmp_102_write_config_reg(int i2c_bus_desc, uint16_t config_reg)
 {
@@ -94,7 +86,7 @@ int tmp_102_write_config_reg(int i2c_bus_desc, uint16_t config_reg)
                 printf("\nError writing the config register of the Temp Sensor: TMP 102 %s", strerror(errno));
 	}
 	return retval;
-	
+
 }
 int tmp_102_read_TLow_reg(int i2c_bus_desc, float *TLow_reg)
 {
@@ -203,4 +195,3 @@ int tmp_102_write_THigh_reg(int i2c_bus_desc, float THigh_register)
         return retval;
 
 }
-
