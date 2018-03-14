@@ -16,6 +16,12 @@ apds_9301_driver.o: $(SDIR)apds_9301_driver.c $(IDIR)apds_9301_driver.h $(IDIR)i
 tmp_102_driver.o: $(SDIR)tmp_102_driver.c $(IDIR)tmp_102_driver.h $(IDIR)i2c_wrapper.h
 	$(CC) -c -g $(SDIR)tmp_102_driver.c
 
+light_sense_task.o: $(SDIR)light_sense_task.c $(IDIR)light_sense_task.h $(IDIR)i2c_wrapper.h
+	$(CC) -c -g $(SDIR)light_sense_task.c
+
+temp_sense_task.o: $(SDIR)temp_sense_task.c $(IDIR)temp_sense_task.h $(IDIR)i2c_wrapper.h
+        $(CC) -c -g $(SDIR)temp_sense_task.c
+
 main.o: main.c $(IDIR)i2c_wrapper.h $(IDIR)apds_9301_driver.h
 	$(CC) -c -g main.c
 .PHONY: clean

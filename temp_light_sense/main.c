@@ -23,6 +23,8 @@
 
 #include "include/i2c_wrapper.h"
 #include "include/apds_9301_driver.h"
+#include "include/light_sense_task.h"
+#include "include/temp_sense_task.h"
 
 //int bus_number = 2;
 /*
@@ -122,6 +124,7 @@ int main()
 
 }
 */
+/*
 int bus_number = 2;
 #include "include/tmp_102_driver.h"
 #include <poll.h>
@@ -225,8 +228,8 @@ int GPIO_Interrupt_Scan_Thread(int i2c_bus_desc)
         	        printf("\nThe temperature is %2.4f", temperature);
 		}
 	}
-}
-
+}*/
+/*
 int main()
 {
 
@@ -252,7 +255,7 @@ int main()
 
 	printf("The config register is %04x It is written as %04x", config_write, config_read);
 */
-	tmp_102_init(i2c_bus_desc);
+/*	tmp_102_init(i2c_bus_desc);
 
 	temperature = 30.0625;
 
@@ -280,7 +283,7 @@ int main()
 	GPIO_Interrupt_Scan_Thread(i2c_bus_desc);
 	return 0;
 }
-/*
+*/
 pthread_t logger_task;
 pthread_t temp_sense_task;
 pthread_t light_sense_task;
@@ -295,9 +298,9 @@ int void main(void)
 {
 	pthread_args_t thread_args;
 
-	pthread_create(&logger_task, NULL, logger_task_thread, (void *) &thread_args);
+	//pthread_create(&logger_task, NULL, logger_task_thread, (void *) &thread_args);
 	pthread_create(&temp_sense_task, NULL, temp_sense_task_thread, (void *) &thread_args);
 	pthread_create(&light_sense_task, NULL, light_sense_task_thread, (void *) &thread_args);
-	pthread_create(&sock_comm_task, NULL, sock_comm_task_thread, (void *) &thread_args);
+	//pthread_create(&sock_comm_task, NULL, sock_comm_task_thread, (void *) &thread_args);
 
-}*/
+}
