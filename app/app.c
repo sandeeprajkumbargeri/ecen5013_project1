@@ -9,7 +9,9 @@ int main(void)
   char command[16], response[64];
   struct sockaddr_un app_sockaddr, remote_sockaddr;
   socklen_t sockaddr_length;
+  unsigned short int threshold = 0;
 
+  command_list_init();
   signal(SIGINT, signal_handler);
 
   app_sock = socket(AF_UNIX, SOCK_DGRAM, 0);     //create a datagram socket
@@ -37,7 +39,9 @@ int main(void)
   if(bind(app_sock, (struct sockaddr *) &app_sockaddr, sizeof(struct sockaddr_un)) < 0)
     errExit("## ERROR ## Bind: ");
 
-  printf("\n\t\t\t## AVAILABLE COMMANDS ##\nhelp     get [temp or light]     exit\n");
+  printf("\n\t\t\t## AVAILABLE COMMANDS ##\n");
+  for(int i = 0; i < TOTAL_COMMANDS; i++)
+    printf("%s\n",command_list[i]);
 
   while(1)
   {
@@ -61,19 +65,50 @@ int main(void)
     }
 
     else if(request == COMMAND_HELP)
-      printf("\n\t\t\t## AVAILABLE COMMANDS ##\nhelp     get [temp or light]     exit\n");
+    {
+      printf("\n\t\t\t## AVAILABLE COMMANDS ##\n");
+      for(int i = 0; i < TOTAL_COMMANDS; i++)
+        printf("%s\n",command_list[i]);
+    }
 
     else
     {
-      if(sendto(app_sock, (const void *) &request, sizeof(request), 0, (const struct sockaddr *) &remote_sockaddr, sockaddr_length) < 0)
-        errExit("## ERROR ## Sending request to remote: ");
+      if((request == COMMAND_LIGHT_SET_INT_TRSHLD_LOW) || (request == COMMAND_LIGHT_SET_INT_TRSHLD_HIGH))
+      {
+        printf("Threshold Value: ");
+        scanf("%hu", &threshold);
 
-      bzero(response, sizeof(response));
+        if(sendto(app_sock, (const void *) &request, sizeof(request), 0, (const struct sockaddr *) &remote_sockaddr, sockaddr_length) < 0)
+          errExit("## ERROR ## Sending request to remote: ");
 
-      if(recvfrom(app_sock, (void *) response, sizeof(response), 0, (struct sockaddr *) &remote_sockaddr, &sockaddr_length) < 0)
-        errExit("## ERROR ## Receiving response from remote: ");
+        request = (unsigned char) threshold;
 
-      printf("-> %s\n", response);
+        if(sendto(app_sock, (const void *) &request, sizeof(request), 0, (const struct sockaddr *) &remote_sockaddr, sockaddr_length) < 0)
+          errExit("## ERROR ## Sending request to remote: ");
+
+        request = (unsigned char) (threshold >> 8);
+
+        if(sendto(app_sock, (const void *) &request, sizeof(request), 0, (const struct sockaddr *) &remote_sockaddr, sockaddr_length) < 0)
+          errExit("## ERROR ## Sending request to remote: ");
+
+        if(recvfrom(app_sock, (void *) response, sizeof(response), 0, (struct sockaddr *) &remote_sockaddr, &sockaddr_length) < 0)
+          errExit("## ERROR ## Receiving response from remote: ");
+
+        printf("-> %s\n", response);
+      }
+
+      else
+      {
+        if(sendto(app_sock, (const void *) &request, sizeof(request), 0, (const struct sockaddr *) &remote_sockaddr, sockaddr_length) < 0)
+          errExit("## ERROR ## Sending request to remote: ");
+
+        bzero(response, sizeof(response));
+
+        if(recvfrom(app_sock, (void *) response, sizeof(response), 0, (struct sockaddr *) &remote_sockaddr, &sockaddr_length) < 0)
+          errExit("## ERROR ## Receiving response from remote: ");
+
+        printf("-> %s\n", response);
+      }
     }
   }
 
@@ -84,19 +119,10 @@ int main(void)
 unsigned char parse_command(unsigned char* input)
 {
 		unsigned int i = 0;
-		unsigned char* commands[TOTAL_COMMANDS];
-		unsigned char* match;
-
-		commands[0] = "help";
-		commands[1] = "get temp";
-		commands[2] = "get light";
-		commands[3] = "exit";
 
 		for(i = 0; i < TOTAL_COMMANDS; i++)
 		{
-			match = strstr(input, commands[i]);
-
-			if(match == input)
+			if(strcmp(input, command_list[i]) == 0)
 				return (unsigned char) i;
 		}
 
@@ -117,9 +143,52 @@ void signal_handler(int signal)
   }
 }
 
+void command_list_init(void)
+{
+  strcpy(command_list[COMMAND_HELP], "help");
+  strcpy(command_list[COMMAND_TEMP_READ_TLOW], "temp read t-low");
+  strcpy(command_list[COMMAND_TEMP_READ_THIGH], "temp read t-high");
+  strcpy(command_list[COMMAND_TEMP_READ_DATA_REG], "temp read data");
+  strcpy(command_list[COMMAND_TEMP_SET_SD_ON], "temp set shutdown on");
+  strcpy(command_list[COMMAND_TEMP_SET_SD_OFF], "temp set shutdown off");
+  strcpy(command_list[COMMAND_TEMP_READ_RESOLUTION], "temp read resolution");
+  strcpy(command_list[COMMAND_TEMP_READ_FAULT_BITS], "temp read fault-bits");
+  strcpy(command_list[COMMAND_TEMP_READ_EM], "temp read ext-mode");
+  strcpy(command_list[COMMAND_TEMP_SET_EM_ON], "temp set ext-mode on");
+  strcpy(command_list[COMMAND_TEMP_SET_EM_OFF], "temp set ext-mode off");
+
+  strcpy(command_list[COMMAND_TEMP_SET_CONV_RATE_0], "temp set conv-rate 0.25hz");
+  strcpy(command_list[COMMAND_TEMP_SET_CONV_RATE_1], "temp set conv-rate 1hz");
+  strcpy(command_list[COMMAND_TEMP_SET_CONV_RATE_2], "temp set conv-rate 4hz");
+  strcpy(command_list[COMMAND_TEMP_SET_CONV_RATE_3], "temp set conv-rate 8hz");
+  strcpy(command_list[COMMAND_TEMP_READ_CONV_RATE], "temp read conv-rate");
+
+
+  strcpy(command_list[COMMAND_LIGHT_SET_INTG_TIME_0], "light set intg-time 13.7ms");
+  strcpy(command_list[COMMAND_LIGHT_SET_INTG_TIME_1], "light set intg-time 101ms");
+  strcpy(command_list[COMMAND_LIGHT_SET_INTG_TIME_2], "light set intg-time 402ms");
+  strcpy(command_list[COMMAND_LIGHT_READ_INTG_TIME], "light read intg-time");
+  strcpy(command_list[COMMAND_LIGHT_READ_GAIN], "light read gain");
+  strcpy(command_list[COMMAND_LIGHT_SET_GAIN_HIGH], "light set gain high");
+  strcpy(command_list[COMMAND_LIGHT_SET_GAIN_LOW], "light set gain low");
+  strcpy(command_list[COMMAND_LIGHT_SET_INT_ENABLE], "light set int enable");
+  strcpy(command_list[COMMAND_LIGHT_SET_INT_DISABLE], "light set int disable");
+  strcpy(command_list[COMMAND_LIGHT_READ_IDENTIFY_REG], "light read id");
+  strcpy(command_list[COMMAND_LIGHT_READ_INT_TRSHLD_LOW], "light read trshld low");
+  strcpy(command_list[COMMAND_LIGHT_READ_INT_TRSHLD_HIGH], "light read trshld low");
+  strcpy(command_list[COMMAND_LIGHT_SET_INT_TRSHLD_LOW], "light set trshld low");
+  strcpy(command_list[COMMAND_LIGHT_SET_INT_TRSHLD_HIGH], "light set trshld high");
+
+  strcpy(command_list[COMMAND_EXIT], "exit");
+}
+
 //Function to print the error to STDOUT and exit.
 void errExit(char *strError)
 {
+  char app_sockaddr_path[32];
+  sprintf(app_sockaddr_path, "/tmp/%u_socket", getpid());
   perror(strError);
+
+  remove(app_sockaddr_path);
   exit(EXIT_FAILURE);
 }
