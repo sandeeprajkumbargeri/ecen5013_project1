@@ -124,6 +124,109 @@ int main()
 */
 int bus_number = 2;
 #include "include/tmp_102_driver.h"
+#include <poll.h>
+
+int GPIO_Interrupt_Setup()
+{
+	int retval, gpio_desc;
+	char buf[10];
+	gpio_desc = open("/sys/class/gpio/export", O_WRONLY);
+	if(gpio_desc < 0)
+	{
+		printf("Error opening sys/class/gpio/export file. So can't reserve a GPIO pin%s", strerror(errno));
+		return -1;
+	}
+
+	bzero(buf, sizeof(buf));
+	sprintf(buf, "%d", GPIO_INTERRUPT_PIN);
+
+	retval = write(gpio_desc, buf, strlen(buf));
+	if(retval < 0)
+	{
+		printf("Error reserving GPIO%d pin: %s", GPIO_INTERRUPT_PIN, strerror(errno));
+		gpio_desc = open("/sys/class/gpio/unexport", O_WRONLY);
+		sprintf(buf, "%d", GPIO_INTERRUPT_PIN);
+		retval = write(gpio_desc, buf, strlen(buf));
+		return -1;
+	}
+	
+	bzero(buf, sizeof(buf));
+
+	sprintf(buf, "/sys/class/gpio/gpio%d/direction", GPIO_INTERRUPT_PIN);
+
+	gpio_desc = open(buf, O_WRONLY);
+	if(gpio_desc < 0)
+	{
+		printf("Error opening %s file. So can't set the direction of the GPIO pin");
+		gpio_desc = open("/sys/class/gpio/unexport", O_WRONLY);
+		sprintf(buf, "%d", GPIO_INTERRUPT_PIN);
+		retval = write(gpio_desc, buf, strlen(buf));
+		return -1;
+	}
+	bzero(buf, sizeof(buf));
+	sprintf(buf, "in");
+	retval = write(gpio_desc, buf, strlen(buf));
+	if(retval < 0)
+	{
+                printf("Error opening %s file. So can't set the direction of the GPIO pin");
+                gpio_desc = open("/sys/class/gpio/unexport", O_WRONLY);
+                sprintf(buf, "%d", GPIO_INTERRUPT_PIN);
+                retval = write(gpio_desc, buf, strlen(buf));
+                return -1;
+	}
+
+        sprintf(buf, "/sys/class/gpio/gpio%d/edge", GPIO_INTERRUPT_PIN);
+
+        gpio_desc = open(buf, O_WRONLY);
+        if(gpio_desc < 0)
+        {
+                printf("Error opening %s file. So can't set the GPIO pin in edge triggered interrupt mode");
+                gpio_desc = open("/sys/class/gpio/unexport", O_WRONLY);
+                sprintf(buf, "%d", GPIO_INTERRUPT_PIN);
+                retval = write(gpio_desc, buf, strlen(buf));
+                return -1;
+        }
+        bzero(buf, sizeof(buf));
+        sprintf(buf, "both");
+        retval = write(gpio_desc, buf, strlen(buf));
+        if(retval < 0)
+        {
+                printf("Error opening %s file. So can't set the GPIO pin in edge triggered interrupt mode");
+                gpio_desc = open("/sys/class/gpio/unexport", O_WRONLY);
+                sprintf(buf, "%d", GPIO_INTERRUPT_PIN);
+                retval = write(gpio_desc, buf, strlen(buf));
+                return -1;
+        }
+	return gpio_desc;
+
+}
+
+int GPIO_Interrupt_Scan_Thread(int i2c_bus_desc)
+{
+	int gpio_desc, retval;
+	struct pollfd gpio_pollfd;
+	float temperature;
+
+	gpio_desc = GPIO_Interrupt_Setup();
+	if(gpio_desc < 0)
+	{
+		return -1;
+	}
+
+	gpio_pollfd.fd = gpio_desc;
+	gpio_pollfd.events = POLLPRI|POLLERR;
+
+	while(1)
+	{
+		poll(&gpio_pollfd, 1, -1);
+		if(gpio_pollfd.revents|POLLPRI)
+		{
+		        retval = tmp_102_read_temperature_reg(i2c_bus_desc, &temperature);
+        	        printf("\nThe temperature is %2.4f", temperature);
+		}
+	}
+}
+
 int main()
 {
 
@@ -151,7 +254,7 @@ int main()
 */
 	tmp_102_init(i2c_bus_desc);
 
-	temperature = 10.0625;
+	temperature = 30.0625;
 
 	retval = tmp_102_write_TLow_reg(i2c_bus_desc, temperature);
 	temperature = 0;
@@ -174,7 +277,7 @@ int main()
 	{
 		printf("\nThe temperature is %2.4f", temperature);
 	}
-
+	GPIO_Interrupt_Scan_Thread(i2c_bus_desc);
 	return 0;
 }
 /*

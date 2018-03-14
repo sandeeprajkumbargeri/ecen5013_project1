@@ -18,6 +18,8 @@
 
 #define RESOLUTION 0.0625
 
+#define GPIO_INTERRUPT_PIN 65
+
 int tmp_102_init(int i2c_bus_desc);
 int tmp_102_read_temperature_reg(int i2c_bus_desc, float *temperature);
 int tmp_102_read_config_reg(int i2c_bus_desc, uint16_t *config_reg);
