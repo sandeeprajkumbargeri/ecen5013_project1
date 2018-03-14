@@ -17,7 +17,7 @@
 
 extern pthread_mutex_t bus_mutex;
 
-inline int i2c_bus_init(int bus_number)
+int i2c_bus_init(int bus_number)
 {
 	int i2c_bus_desc;
 	char filename[20];
@@ -26,17 +26,17 @@ inline int i2c_bus_init(int bus_number)
         sprintf(filename, "/dev/i2c-%d", bus_number);
         i2c_bus_desc = open(filename, O_RDWR);
 	pthread_mutex_init(&bus_mutex, NULL);
-	
+
 	return i2c_bus_desc;
 }
 
-inline int i2c_bus_access(int i2c_bus_desc, uint8_t slave_address)
+int i2c_bus_access(int i2c_bus_desc, uint8_t slave_address)
 {
 	pthread_mutex_lock(&bus_mutex);
         return ioctl(i2c_bus_desc, I2C_SLAVE, slave_address);
 }
 
-inline void i2c_bus_free()
+void i2c_bus_free()
 {
 	pthread_mutex_unlock(&bus_mutex);
 }
@@ -67,7 +67,7 @@ size_t i2c_bus_read(int i2c_bus_desc, uint8_t register_address, uint8_t* buffer,
 
 	buf[0] = register_address;
 	retval = write(i2c_bus_desc, buf, 1);
-	
+
 	if(retval < 0)
 	{
 		perror("Error while reading contents");
@@ -78,5 +78,3 @@ size_t i2c_bus_read(int i2c_bus_desc, uint8_t register_address, uint8_t* buffer,
 	memcpy(buffer, buf, length);
 	return retval;
 }
-
-
