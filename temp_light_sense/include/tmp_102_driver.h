@@ -1,6 +1,8 @@
 #ifndef __TMP_102_DRIVER_H
 #define __TMP_102_DRIVER_H
 
+#include <stdint.h>
+
 #define SLAVE_ADDRESS_TMP 0x48 
 
 #define TEMPERATURE_REGISTER 	0x00
