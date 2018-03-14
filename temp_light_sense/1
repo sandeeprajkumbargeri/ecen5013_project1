@@ -154,7 +154,6 @@ int main()
 	temperature = 10.0625;
 
 	retval = tmp_102_write_TLow_reg(i2c_bus_desc, temperature);
-	temperature = 0;
 	retval = tmp_102_read_TLow_reg(i2c_bus_desc, &temperature);
 
 	printf("\nThe Lower threshold for temperature is %2.4f", temperature);
@@ -162,7 +161,6 @@ int main()
 	temperature = 40.0625;
 
 	retval = tmp_102_write_THigh_reg(i2c_bus_desc, temperature);
-	temperature = 0;
 	retval = tmp_102_read_THigh_reg(i2c_bus_desc, &temperature);
 
 	printf("\nThe Higher threshold for temperature is %2.4f", temperature);

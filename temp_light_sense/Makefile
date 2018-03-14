@@ -5,7 +5,7 @@ CFLAGS=-g -lm -lpthread -lrt
 RFLAGS=-rf
 
 execute: main.o i2c_wrapper.o apds_9301_driver.o tmp_102_driver.o
-	$(CC) -o execute main.o i2c_wrapper.o apds_9301_driver.o $(CFLAGS)
+	$(CC) -o execute main.o i2c_wrapper.o apds_9301_driver.o tmp_102_driver.o $(CFLAGS)
 
 i2c_wrapper.o: $(SDIR)i2c_wrapper.c $(IDIR)i2c_wrapper.h
 	$(CC) -c -g $(SDIR)i2c_wrapper.c
