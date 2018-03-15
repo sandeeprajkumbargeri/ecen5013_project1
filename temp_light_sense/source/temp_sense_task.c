@@ -19,6 +19,7 @@ void *temp_sense_task_thread(void *args)
 {
   int i2c_bus_desc, retval = 0;
   float temperature;
+  mq_payload_t temp_heartbeat;
 
   i2c_bus_desc = i2c_bus_init(2);
   retval = i2c_bus_access(i2c_bus_desc, SLAVE_ADDRESS_TMP);
@@ -47,12 +48,29 @@ void *temp_sense_task_thread(void *args)
 
   i2c_bus_free();
 
+  bzero(temp_heartbeat.str, sizeof(temp_heartbeat.str));
+  strcpy(temp_heartbeat.str, "TEMP_TASK Alive");
+
   while(1)
   {
-    retval = tmp_102_read_temperature_reg(i2c_bus_desc, &temperature);
-  	if(retval > 0)
-  	{
-  		printf("\nThe temperature is %2.4f", temperature);
-  	}
-  }
+    sem_wait(sem_temp);
+    sem_post(sem_temp);
+
+    if(temp_read == true)
+    {
+      sem_wait(sem_temp);
+      retval = tmp_102_read_temperature_reg(i2c_bus_desc, &temperature);
+
+      if(retval > 0)
+    		printf("\nThe temperature is %2.4f", temperature);
+
+      if(mq_send(mq_temp, (const char *) &temp_heartbeat, sizeof(data), 0) < 0)
+      perror("TEMP TASK: Unable to send heartbeat.\n");
+    }
+
+    if(temp_asynch == true)
+    {
+      sem_post(sem_temp);
+      //code for asynchronus request
+    }
 }

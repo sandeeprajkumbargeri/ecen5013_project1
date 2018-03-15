@@ -46,6 +46,8 @@ pthread_t sock_comm_task;
 
 bool light_read = false;
 bool temp_read = false;
+bool temp_asynch = false;
+bool light_asynch = false;
 
 sem_t *sem_light, *sem_temp, *sem_logger, *sem_sock_comm;
 mqd_t mq_light, mq_temp, mq_logger, mq_sock_comm, mq_heartbeat;
@@ -58,9 +60,9 @@ typedef struct pthread_args
 } pthread_args_t;
 
 //Structure of the data which is communicated between the parent and the child using pipes.
-typedef struct payload
+typedef struct mq_payload
 {
-  char string[64];
-} payload_t;
+  char str[64];
+} mq_payload_t;
 
 #endif

@@ -305,7 +305,7 @@ int main(void)
 	bzero(&attr, sizeof(attr));
 	attr.mq_flags = O_RDWR;
 	attr.mq_maxmsg = 20;
-	attr.mq_msgsize = sizeof(payload_t);
+	attr.mq_msgsize = sizeof(mq_payload_t);
 
 	mq_logger = mq_open(MQ_LOGGER_ID, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, &attr);
 	mq_heartbeat = mq_open(MQ_HEARTBEAT_ID, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, &attr);
