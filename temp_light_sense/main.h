@@ -39,18 +39,18 @@
 #define CLOCK_ID                CLOCK_MONOTONIC
 #define TIMER_EXPIRY_MS         500
 
-pthread_t logger_task;
-pthread_t temp_sense_task;
-pthread_t light_sense_task;
-pthread_t sock_comm_task;
+extern pthread_t logger_task;
+extern pthread_t temp_sense_task;
+extern pthread_t light_sense_task;
+extern pthread_t sock_comm_task;
 
-bool light_read = false;
-bool temp_read = false;
-bool temp_asynch = false;
-bool light_asynch = false;
+extern bool light_read;
+extern bool temp_read;
+extern bool temp_asynch;
+extern bool light_asynch;
 
-sem_t *sem_light, *sem_temp, *sem_logger, *sem_sock_comm;
-mqd_t mq_light, mq_temp, mq_logger, mq_sock_comm, mq_heartbeat;
+extern sem_t sem_light, sem_temp, sem_logger, sem_sock_comm;
+extern mqd_t mq_light, mq_temp, mq_logger, mq_sock_comm, mq_heartbeat;
 
 void timer_expiry_handler(union sigval);
 

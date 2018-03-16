@@ -1,9 +1,12 @@
 #include "../include/i2c_wrapper.h"
 #include "../include/apds_9301_driver.h"
+#include "../main.h"
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
 #include <math.h>
+
+#include <semaphore.h>
 
 float calculate_ambient_lux(uint16_t adc_channel_out0, uint16_t adc_channel_out1)
 {
@@ -64,6 +67,8 @@ void *light_sense_task_thread(void *args)
 
         i2c_bus_free();
 
+	printf("I am here");
+
 	if(retval < 0)
 	{
 		printf("Error setting up the ic_character device file: %s", strerror(errno));
@@ -71,30 +76,38 @@ void *light_sense_task_thread(void *args)
 		retval = -1;
 		pthread_exit(&retval);
 	}
+	printf("I am also here");
 	while(1)
 	{
-	        retval = i2c_bus_access(i2c_bus_desc, SLAVE_ADDRESS);
-
-		adc0 = apds_9301_read_adcn(i2c_bus_desc, ADC_CHANNEL_0);
-		if(adc0 < 0)
+		sem_wait(&sem_light);
+		sem_post(&sem_light);
+		if(light_read)
 		{
-			printf("Error in reading ADC Channel 0 register\n");
-			fflush(stdout);
-		        i2c_bus_free();
-			continue;
-		}
-		adc1 = apds_9301_read_adcn(i2c_bus_desc, ADC_CHANNEL_1);
-		if(adc1 < 0)
-		{
-			printf("Error in reading ADC Channel 1 register\n");
-			fflush(stdout);
-                        i2c_bus_free();
-			continue;
-		}
-                i2c_bus_free();
+			sem_wait(&sem_light);
+			light_read = false;
+	        	retval = i2c_bus_access(i2c_bus_desc, SLAVE_ADDRESS);
 
-		ambient_lux = calculate_ambient_lux((uint16_t) adc0, (uint16_t) adc1);
-		printf("The Ambient Light Lux is %2.4f\n", ambient_lux);
-		fflush(stdout);
+			adc0 = apds_9301_read_adcn(i2c_bus_desc, ADC_CHANNEL_0);
+			if(adc0 < 0)
+			{
+				printf("Error in reading ADC Channel 0 register\n");
+				fflush(stdout);
+			        i2c_bus_free();
+				continue;
+			}
+			adc1 = apds_9301_read_adcn(i2c_bus_desc, ADC_CHANNEL_1);
+			if(adc1 < 0)
+			{
+				printf("Error in reading ADC Channel 1 register\n");
+				fflush(stdout);
+                	        i2c_bus_free();
+				continue;
+			}
+                	i2c_bus_free();
+
+			ambient_lux = calculate_ambient_lux((uint16_t) adc0, (uint16_t) adc1);
+			printf("The Ambient Light Lux is %2.4f\n", ambient_lux);
+			fflush(stdout);
+		}
 	}
 }	

@@ -288,10 +288,23 @@ int main()
 
 #include "main.h"
 
+pthread_t logger_task;
+pthread_t temp_sense_task;
+pthread_t light_sense_task;
+pthread_t sock_comm_task;
+
+bool light_read = false;
+bool temp_read = false;
+bool temp_asynch = false;
+bool light_asynch = false;
+
+sem_t sem_light, sem_temp, sem_logger, sem_sock_comm;
+mqd_t mq_light, mq_temp, mq_logger, mq_sock_comm, mq_heartbeat;
+
 int main(void)
 {
 	timer_t timer_id;
-  struct sigevent sevp;
+  	struct sigevent sevp;
 	struct itimerspec tspec;
 	pthread_args_t thread_args;
 	struct mq_attr attr;
@@ -313,21 +326,21 @@ int main(void)
 	mq_temp = mq_open(MQ_TEMP_TASK_ID, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, &attr);
 	mq_sock_comm = mq_open(MQ_SOCK_COMM_TASK_ID, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, &attr);
 
-	sem_init(sem_logger, 0, 0);
-	sem_init(sem_light, 0, 0);
-	sem_init(sem_temp, 0, 0);
-	sem_init(sem_sock_comm, 0, 0);
+	sem_init(&sem_logger, 0, 0);
+	sem_init(&sem_light, 0, 0);
+	sem_init(&sem_temp, 0, 0);
+	sem_init(&sem_sock_comm, 0, 0);
 
 	//Set the timer configuration
-  sevp.sigev_notify = SIGEV_THREAD;
-  sevp.sigev_value.sival_ptr = &timer_id;
-  sevp.sigev_notify_function = timer_expiry_handler;
+  	sevp.sigev_notify = SIGEV_THREAD;
+  	sevp.sigev_value.sival_ptr = &timer_id;
+  	sevp.sigev_notify_function = timer_expiry_handler;
 	sevp.sigev_notify_attributes = NULL;
 
 	//Set the timer value to 500ms
-  tspec.it_value.tv_sec = 0;
-  tspec.it_value.tv_nsec = TIMER_EXPIRY_MS *1000000;
-  tspec.it_interval.tv_sec = 0;
+  	tspec.it_value.tv_sec = 0;
+  	tspec.it_value.tv_nsec = TIMER_EXPIRY_MS *1000000;
+  	tspec.it_interval.tv_sec = 0;
 	tspec.it_interval.tv_nsec = TIMER_EXPIRY_MS *1000000;
 
 	//Timer creation and setting alarm
@@ -338,6 +351,7 @@ int main(void)
 	pthread_create(&temp_sense_task, NULL, temp_sense_task_thread, (void *) &thread_args);
 	pthread_create(&light_sense_task, NULL, light_sense_task_thread, (void *) &thread_args);
 	//pthread_create(&sock_comm_task, NULL, sock_comm_task_thread, (void *) &thread_args);
+	while(1);
 }
 
 
@@ -347,16 +361,18 @@ void timer_expiry_handler(union sigval arg)
 
 	if(count)
 	{
-	  printf("Hello world\n");
+		count = false;
+		printf("Hello world\n");
 		light_read = true;
-		sem_post(sem_temp);
-		sem_post(sem_logger);
+		sem_post(&sem_temp);
+//		sem_post(sem_logger);
 	}
 
 	else
 	{
+		count = true;
 		temp_read = true;
-		sem_post(sem_light);
-		sem_post(sem_sock_comm);
+		sem_post(&sem_light);
+//		sem_post(sem_sock_comm);
 	}
 }
