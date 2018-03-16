@@ -57,3 +57,9 @@ void signal_handler(int);
 unsigned char parse_command(unsigned char* input);
 
 char command_list[TOTAL_COMMANDS][32];
+
+typedef struct comm_payload
+{
+  unsigned char command;
+  unsigned short data;
+} comm_payload_t;

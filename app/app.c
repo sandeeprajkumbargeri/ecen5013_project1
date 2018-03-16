@@ -5,11 +5,11 @@ int main(void)
 {
   int app_sock = 0;
   char app_sockaddr_path[32], remote_sockaddr_path[32];
-  unsigned char request;
   char command[16], response[64];
   struct sockaddr_un app_sockaddr, remote_sockaddr;
   socklen_t sockaddr_length;
   unsigned short int threshold = 0;
+  comm_payload_t request;
 
   command_list_init();
   signal(SIGINT, signal_handler);
@@ -50,21 +50,22 @@ int main(void)
     fgets(command, sizeof(command), stdin);
 
     command[strlen(command) - 1] = '\0';
-    request = parse_command(command);
+    bzero(&request, sizeof(request));
+    request.command = parse_command(command);
 
-    if(request == COMMAND_INVALID)
+    if(request.command == COMMAND_INVALID)
     {
       printf("\n## ERROR ## Invalid command.\n");
       continue;
     }
 
-    else if(request == COMMAND_EXIT)
+    else if(request.command == COMMAND_EXIT)
     {
       remove(app_sockaddr_path);
       break;
     }
 
-    else if(request == COMMAND_HELP)
+    else if(request.command == COMMAND_HELP)
     {
       printf("\n\t\t\t## AVAILABLE COMMANDS ##\n");
       for(int i = 0; i < TOTAL_COMMANDS; i++)
@@ -73,42 +74,21 @@ int main(void)
 
     else
     {
-      if((request == COMMAND_LIGHT_SET_INT_TRSHLD_LOW) || (request == COMMAND_LIGHT_SET_INT_TRSHLD_HIGH))
+      if((request.command == COMMAND_LIGHT_SET_INT_TRSHLD_LOW) || (request.command == COMMAND_LIGHT_SET_INT_TRSHLD_HIGH))
       {
         printf("Threshold Value: ");
-        scanf("%hu", &threshold);
-
-        if(sendto(app_sock, (const void *) &request, sizeof(request), 0, (const struct sockaddr *) &remote_sockaddr, sockaddr_length) < 0)
-          errExit("## ERROR ## Sending request to remote: ");
-
-        request = (unsigned char) threshold;
-
-        if(sendto(app_sock, (const void *) &request, sizeof(request), 0, (const struct sockaddr *) &remote_sockaddr, sockaddr_length) < 0)
-          errExit("## ERROR ## Sending request to remote: ");
-
-        request = (unsigned char) (threshold >> 8);
-
-        if(sendto(app_sock, (const void *) &request, sizeof(request), 0, (const struct sockaddr *) &remote_sockaddr, sockaddr_length) < 0)
-          errExit("## ERROR ## Sending request to remote: ");
-
-        if(recvfrom(app_sock, (void *) response, sizeof(response), 0, (struct sockaddr *) &remote_sockaddr, &sockaddr_length) < 0)
-          errExit("## ERROR ## Receiving response from remote: ");
-
-        printf("-> %s\n", response);
+        scanf("%hu", &request.data);
       }
 
-      else
-      {
-        if(sendto(app_sock, (const void *) &request, sizeof(request), 0, (const struct sockaddr *) &remote_sockaddr, sockaddr_length) < 0)
-          errExit("## ERROR ## Sending request to remote: ");
+      if(sendto(app_sock, (const void *) &request, sizeof(request), 0, (const struct sockaddr *) &remote_sockaddr, sockaddr_length) < 0)
+        errExit("## ERROR ## Sending request to remote: ");
 
-        bzero(response, sizeof(response));
+      bzero(response, sizeof(response));
 
-        if(recvfrom(app_sock, (void *) response, sizeof(response), 0, (struct sockaddr *) &remote_sockaddr, &sockaddr_length) < 0)
-          errExit("## ERROR ## Receiving response from remote: ");
+      if(recvfrom(app_sock, (void *) response, sizeof(response), 0, (struct sockaddr *) &remote_sockaddr, &sockaddr_length) < 0)
+        errExit("## ERROR ## Receiving response from remote: ");
 
-        printf("-> %s\n", response);
-      }
+      printf("-> %s\n", response);
     }
   }
 
