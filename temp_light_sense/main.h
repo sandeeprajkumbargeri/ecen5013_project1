@@ -92,5 +92,6 @@ typedef struct mq_payload_comm
 	uint16_t data;
 } mq_temp_light_payload_t;
 
+FILE *log_file;
 
 #endif

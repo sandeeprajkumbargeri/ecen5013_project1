@@ -304,8 +304,6 @@ bool task_alive[4] = {true};
 bool task_heartbeat[4] = {false};
 bool send_heartbeat[4] = {true};
 
-FILE *log_file;
-
 char task_name[4][30];
 
 struct sigevent heartbeat_sevp;
@@ -322,6 +320,8 @@ int main (int argc, char *argv[])
 	pthread_args_t thread_args;
 	int retval;
 	mq_payload_heartbeat_t heartbeat;
+	char log_message[128] = {0};
+
 
 	if (argc != 2)
   {
@@ -337,7 +337,7 @@ int main (int argc, char *argv[])
     exit(1);
   }
 
-	fclose(log_file);
+	//fclose(log_file);
 
 	setup_mq();
 
@@ -368,10 +368,16 @@ int main (int argc, char *argv[])
 	timer_create(CLOCK_ID, &sevp, &timer_id);
 	timer_settime(timer_id, 0, &tspec, 0);
 
-	//pthread_create(&logger_task, NULL, logger_task_thread, (void *) &thread_args);
+	pthread_create(&logger_task, NULL, logger_task_thread, (void *) &thread_args);
 	pthread_create(&temp_sense_task, NULL, temp_sense_task_thread, (void *) &thread_args);
 	pthread_create(&light_sense_task, NULL, light_sense_task_thread, (void *) &thread_args);
 	pthread_create(&sock_comm_task, NULL, sock_comm_task_thread, (void *) &thread_args);
+
+	bzero(log_message, sizeof(log_message));
+	strcpy(log_message, "Main created all the threads");
+
+	if(mq_send(mq_logger, (const char *) log_message, sizeof(log_message), 0) < 0)
+		perror("Error Sending Request to Temp Task");
 
 	while(1)
 	{
@@ -448,7 +454,7 @@ void setup_mq(void)
 	if(mq_heartbeat < 0)
 		perror("Heartbeat Message Queue");
 
-	attr.mq_msgsize = 64 * sizeof(char);
+	attr.mq_msgsize = 128 * sizeof(char);
 
 	mq_logger = mq_open(MQ_LOGGER_ID, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, &attr);
 

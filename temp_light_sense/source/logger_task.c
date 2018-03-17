@@ -2,22 +2,23 @@
 
 void *logger_task_thread(void *args)
 {
-  char log_info[64];
+  char log_info[128];
   pthread_t logger_heartbeat;
   char current_time[32] = {0};
+  size_t length = 0;
 
-  log_file = fopen("out.log", "a");
   bzero(log_info, sizeof(log_info));
 
   pthread_create(&logger_heartbeat, NULL, heartbeat_notifier, (void *) NULL);
 
   while(1)
   {
-    if(mq_receive(mq_logger, (char *) &log_info, sizeof(log_info), 0) < 0)
-      errExit("## ERROR ## MQ Receive");
+    if(mq_receive(mq_logger, (char *) log_info, sizeof(log_info), 0) < 0)
+      perror("## ERROR ## MQ Receive");
 
       update_time(current_time, sizeof(current_time));
-      fprintf(log_file, "%s  %s\n", current_time, log_info);
+      length = fwrite(log_info, sizeof(char), strlen(log_info), log_file);
+      fclose(log_file);
   }
 }
 

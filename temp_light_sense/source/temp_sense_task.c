@@ -27,6 +27,13 @@ void *temp_sense_task_thread(void *args)
   struct mq_attr heartbeat_attr;
 	mq_temp_light_payload_t request;
 	char response[64];
+	char log_message[128];
+
+	bzero(log_message, sizeof(log_message));
+	strcpy(log_message, "Entered temp sense task");
+
+	if(mq_send(mq_logger, (const char *) log_message, sizeof(log_message), 0) < 0)
+		perror("Error Sending Request to Temp Task");
 
 	i2c_bus_desc = i2c_bus_init(2);
 	retval = i2c_bus_access(i2c_bus_desc, SLAVE_ADDRESS_TMP);
