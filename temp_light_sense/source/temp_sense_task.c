@@ -22,16 +22,15 @@
 void *temp_sense_task_thread(void *args)
 {
 	int i2c_bus_desc, retval = 0;
-  float temperature;
-  mq_payload_heartbeat_t temp_heartbeat;
-  struct mq_attr heartbeat_attr;
+  	float temperature;
+  	mq_payload_heartbeat_t temp_heartbeat;
+  	struct mq_attr heartbeat_attr;
 	mq_temp_light_payload_t request;
 	char response[64];
 	char log_message[128];
 
 	bzero(log_message, sizeof(log_message));
 	strcpy(log_message, "Entered temp sense task");
-
 	if(mq_send(mq_logger, (const char *) log_message, sizeof(log_message), 0) < 0)
 		perror("Error Sending Request to Temp Task");
 
@@ -127,7 +126,7 @@ void service_request(mq_temp_light_payload_t *request, char *response, int i2c_b
 	switch(request->command)
 	{
     		case COMMAND_TEMP_READ_TLOW:
-									tmp_102_read_TLow_reg(i2c_bus_desc, &TLow_reg);
+		tmp_102_read_TLow_reg(i2c_bus_desc, &TLow_reg);
 									sprintf(response, "T-Low Reg = %f.\n", TLow_reg);
         					break;
     		case COMMAND_TEMP_READ_THIGH:

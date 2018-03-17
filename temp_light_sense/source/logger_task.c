@@ -15,6 +15,12 @@ void *logger_task_thread(void *args)
   {
     if(mq_receive(mq_logger, (char *) log_info, sizeof(log_info), 0) < 0)
       perror("## ERROR ## MQ Receive");
+      log_file = fopen(filename, "w");
+	  if(log_file == NULL)
+	  {
+	    printf ("\n## ERROR ## Cannot create the file \"%s\". Exiting.\n", filename);
+	    exit(1);
+	  }
 
       update_time(current_time, sizeof(current_time));
       length = fwrite(log_info, sizeof(char), strlen(log_info), log_file);

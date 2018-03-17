@@ -66,6 +66,7 @@ extern bool light_asynch;
 
 extern struct sigevent heartbeat_sevp;
 
+extern char filename[20];
 
 extern sem_t sem_light, sem_temp, sem_logger, sem_sock_comm;
 extern mqd_t mq_light, mq_temp, mq_logger, mq_sock_comm, mq_heartbeat;

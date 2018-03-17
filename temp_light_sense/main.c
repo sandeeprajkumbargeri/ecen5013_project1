@@ -305,6 +305,7 @@ bool task_heartbeat[4] = {false};
 bool send_heartbeat[4] = {true};
 
 char task_name[4][30];
+char filename[20];
 
 struct sigevent heartbeat_sevp;
 
@@ -328,15 +329,17 @@ int main (int argc, char *argv[])
     printf ("USAGE: %s <log filename>\n", argv[0]);
     exit(1);
   }
-
+ 
+	bzero(filename, sizeof(filename));
+	strcpy(filename, argv[1]);
   //Open the log file in the write mode
-  log_file = fopen(argv[1], "w");
-  if(log_file == NULL)
+//  log_file = fopen(argv[1], "w");
+/*  if(log_file == NULL)
   {
     printf ("\n## ERROR ## Cannot create the file \"%s\". Exiting.\n", argv[1]);
     exit(1);
   }
-
+*/
 	//fclose(log_file);
 
 	setup_mq();

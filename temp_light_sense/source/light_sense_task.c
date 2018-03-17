@@ -20,7 +20,7 @@ float calculate_ambient_lux(uint16_t adc_channel_out0, uint16_t adc_channel_out1
 
         if((ratio>0) && (ratio<= 0.50))
         {
-                (0.0304*adc_channel_out0)*(0.062*adc_channel_out0*(powf(ratio, 1.4)));
+                (0.0304*adc_channel_out0) - (0.062*adc_channel_out0*(powf(ratio, 1.4)));
         }
         else if((ratio > 0.50)&&(ratio <= 0.61))
         {
@@ -95,7 +95,7 @@ void *light_sense_task_thread(void *args)
 		if(light_read)
 		{
 			sem_wait(&sem_light);
-/*			light_read = false;
+			light_read = false;
 	        	retval = i2c_bus_access(i2c_bus_desc, SLAVE_ADDRESS);
 
 			adc0 = apds_9301_read_adcn(i2c_bus_desc, ADC_CHANNEL_0);
@@ -120,7 +120,6 @@ void *light_sense_task_thread(void *args)
 			printf("The Ambient Light Lux is %2.4f\n", ambient_lux);
 			fflush(stdout);
 
-*/
       			if(send_heartbeat[LIGHT_TASK_ID])
       			{
               			if(mq_send(mq_heartbeat, (char *) &light_heartbeat, sizeof(light_heartbeat), 1) < 0)
