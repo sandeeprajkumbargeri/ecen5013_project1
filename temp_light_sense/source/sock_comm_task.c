@@ -1,4 +1,5 @@
 #include "../include/sock_comm_task.h"
+#include "../main.h"
 
 
 void *sock_comm_task_thread(void *args)
@@ -8,7 +9,7 @@ void *sock_comm_task_thread(void *args)
   char response[64];
   struct sockaddr_un app_sockaddr, remote_sockaddr;
   socklen_t sockaddr_length;
-  comm_payload_t request;
+  mq_temp_light_payload_t request;
 
   remote_sock = socket(AF_UNIX, SOCK_DGRAM, 0);     //create a datagram socket
 
@@ -38,7 +39,7 @@ void *sock_comm_task_thread(void *args)
 
     if(request.command > 0x00 && request.command < 0x10)
     {
-      if(mq_send(mq_temp, (const char *) &request, sizeof(comm_payload_t), 0) < 0)
+      if(mq_send(mq_temp, (const char *) &request, sizeof(mq_temp_light_payload_t), 0) < 0)
         errExit("Error Sending Request to Temp Task");
 
       temp_asynch = true;
@@ -47,16 +48,18 @@ void *sock_comm_task_thread(void *args)
 
     if(request.command > 0x0F && request.command < 0x1E)
     {
-      if(mq_send(mq_light, (const char *) &request, sizeof(comm_payload_t), 0) < 0)
+      printf("\nFile descriptor for light is %d\n", mq_light);
+      if(mq_send(mq_light, (const char *) &request, sizeof(mq_temp_light_payload_t), 0) < 0)
         errExit("Error Sending Request to Light Task");
 
       light_asynch = true;
       sem_post(&sem_light);
+
     }
 
     bzero(response, sizeof(response));
 
-    if(mq_receive(mq_sock_comm, (char *) &response, sizeof(response), 0) < 0)
+    if(mq_receive(mq_sock_comm, (char *) response, sizeof(response), 0) < 0)
       errExit("Error receiving response");
 
     if(sendto(remote_sock, (const void *) response, sizeof(response), 0, (const struct sockaddr *) &app_sockaddr, sockaddr_length) < 0)

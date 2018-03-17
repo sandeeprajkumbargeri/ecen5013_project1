@@ -28,6 +28,7 @@
 #include <semaphore.h>
 #include <stdbool.h>
 #include <time.h>
+#include <stdint.h>
 
 
 #define MQ_LOGGER_ID            "/logger_mq"
@@ -55,7 +56,7 @@ extern pthread_t light_sense_task;
 extern pthread_t sock_comm_task;
 
 extern bool task_alive[4], task_heartbeat[4], send_heartbeat[4];
-extern char task_name[4][20];
+extern char task_name[4][30];
 
 
 extern bool light_read;
@@ -71,6 +72,7 @@ extern mqd_t mq_light, mq_temp, mq_logger, mq_sock_comm, mq_heartbeat;
 
 void timer_expiry_handler(union sigval);
 void heartbeat_msg_handler(union sigval);
+void setup_mq(void);
 
 typedef struct pthread_args
 {
@@ -83,5 +85,12 @@ typedef struct mq_payload_heartbeat
 	char sender_id;
 	bool heartbeat_status;
 } mq_payload_heartbeat_t;
+
+typedef struct mq_payload_comm
+{
+	unsigned char command;
+	uint16_t data;
+} mq_temp_light_payload_t;
+
 
 #endif

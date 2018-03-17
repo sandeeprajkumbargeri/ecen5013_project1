@@ -26,6 +26,8 @@
 #include "include/tmp_102_driver.h"
 #include "include/light_sense_task.h"
 #include "include/temp_sense_task.h"
+#include "include/logger_task.h"
+#include "include/sock_comm_task.h"
 
 //int bus_number = 2;
 /*
@@ -302,51 +304,42 @@ bool task_alive[4] = {true};
 bool task_heartbeat[4] = {false};
 bool send_heartbeat[4] = {true};
 
-char task_name[4][20];
+FILE *log_file;
+
+char task_name[4][30];
 
 struct sigevent heartbeat_sevp;
 
 sem_t sem_light, sem_temp, sem_logger, sem_sock_comm;
 mqd_t mq_light, mq_temp, mq_logger, mq_sock_comm, mq_heartbeat;
 
-int main(void)
+
+int main (int argc, char *argv[])
 {
 	timer_t timer_id;
   struct sigevent sevp;
 	struct itimerspec tspec;
 	pthread_args_t thread_args;
-	struct mq_attr heartbeat_attr;
 	int retval;
 	mq_payload_heartbeat_t heartbeat;
 
-	mq_unlink(MQ_LOGGER_ID);
-	mq_unlink(MQ_HEARTBEAT_ID);
-	mq_unlink(MQ_LIGHT_TASK_ID);
-	mq_unlink(MQ_TEMP_TASK_ID);
-	mq_unlink(MQ_SOCK_COMM_TASK_ID);
+	if (argc != 2)
+  {
+    printf ("USAGE: %s <log filename>\n", argv[0]);
+    exit(1);
+  }
 
-	bzero(&heartbeat_attr, sizeof(heartbeat_attr));
-	heartbeat_attr.mq_flags = O_RDWR;
-	heartbeat_attr.mq_maxmsg = 10;
-	heartbeat_attr.mq_msgsize = sizeof(heartbeat);
+  //Open the log file in the write mode
+  log_file = fopen(argv[1], "w");
+  if(log_file == NULL)
+  {
+    printf ("\n## ERROR ## Cannot create the file \"%s\". Exiting.\n", argv[1]);
+    exit(1);
+  }
 
-	for(unsigned int i = 0; i < 4; i++)
-	{
-		task_alive[i] = true;
-		task_heartbeat[i] = false;
-		send_heartbeat[i] = true;
-	}
+	fclose(log_file);
 
-//	mq_logger = mq_open(MQ_LOGGER_ID, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, &attr);
-	mq_heartbeat = mq_open(MQ_HEARTBEAT_ID, O_CREAT | O_RDWR| O_NONBLOCK, S_IRUSR | S_IWUSR| S_IROTH| S_IWOTH, &heartbeat_attr);
-
-	if(mq_heartbeat < 0)
-		printf("Message Queue Heartbeat %s\n%d\n", strerror(errno), mq_heartbeat);
-//	mq_light = mq_open(MQ_LIGHT_TASK_ID, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, &attr);
-//	mq_temp = mq_open(MQ_TEMP_TASK_ID, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, &attr);
-//	mq_sock_comm = mq_open(MQ_SOCK_COMM_TASK_ID, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, &attr);
-
-	printf("\n\n\n %d \n\n\n", sizeof(heartbeat));
+	setup_mq();
 
 	sem_init(&sem_logger, 0, 0);
 	sem_init(&sem_light, 0, 0);
@@ -354,11 +347,10 @@ int main(void)
 	sem_init(&sem_sock_comm, 0, 0);
 
 	//Set the timer configuration
-  	sevp.sigev_notify = SIGEV_THREAD;
-  	sevp.sigev_value.sival_ptr = &timer_id;
-  	sevp.sigev_notify_function = timer_expiry_handler;
+	sevp.sigev_notify = SIGEV_THREAD;
+	sevp.sigev_value.sival_ptr = &timer_id;
+	sevp.sigev_notify_function = timer_expiry_handler;
 	sevp.sigev_notify_attributes = NULL;
-
 
 	bzero(task_name, sizeof(task_name));
 	strcpy(task_name[0], LIGHT_TASK_NAME);
@@ -366,11 +358,10 @@ int main(void)
 	strcpy(task_name[2], LOGGER_TASK_NAME);
 	strcpy(task_name[3], SOCK_COMM_TASK_NAME);
 
-
 	//Set the timer value to 500ms
-  	tspec.it_value.tv_sec = 0;
-  	tspec.it_value.tv_nsec = TIMER_EXPIRY_MS *1000000;
-  	tspec.it_interval.tv_sec = 0;
+	tspec.it_value.tv_sec = 0;
+	tspec.it_value.tv_nsec = TIMER_EXPIRY_MS *1000000;
+	tspec.it_interval.tv_sec = 0;
 	tspec.it_interval.tv_nsec = TIMER_EXPIRY_MS *1000000;
 
 	//Timer creation and setting alarm
@@ -380,8 +371,8 @@ int main(void)
 	//pthread_create(&logger_task, NULL, logger_task_thread, (void *) &thread_args);
 	pthread_create(&temp_sense_task, NULL, temp_sense_task_thread, (void *) &thread_args);
 	pthread_create(&light_sense_task, NULL, light_sense_task_thread, (void *) &thread_args);
+	pthread_create(&sock_comm_task, NULL, sock_comm_task_thread, (void *) &thread_args);
 
-	//pthread_create(&sock_comm_task, NULL, sock_comm_task_thread, (void *) &thread_args);
 	while(1)
 	{
 		retval = mq_receive(mq_heartbeat, (char *) &heartbeat, sizeof(heartbeat), NULL);
@@ -402,7 +393,7 @@ void timer_expiry_handler(union sigval arg)
 		printf("Hello world\n");
 		temp_read = true;
 		sem_post(&sem_temp);
-//		sem_post(sem_logger);
+		sem_post(&sem_logger);
 	}
 
 	else
@@ -410,7 +401,7 @@ void timer_expiry_handler(union sigval arg)
 		count ++;
 		light_read = true;
 		sem_post(&sem_light);
-//		sem_post(sem_sock_comm);
+		sem_post(&sem_sock_comm);
 	}
 
 	if(count == 10)
@@ -434,7 +425,52 @@ void timer_expiry_handler(union sigval arg)
 				}
 			}
 		}
-
-		printf("Yo\n");
 	}
+}
+
+void setup_mq(void)
+{
+	struct mq_attr attr;
+
+	mq_unlink(MQ_LOGGER_ID);
+	mq_unlink(MQ_HEARTBEAT_ID);
+	mq_unlink(MQ_LIGHT_TASK_ID);
+	mq_unlink(MQ_TEMP_TASK_ID);
+	mq_unlink(MQ_SOCK_COMM_TASK_ID);
+
+	bzero(&attr, sizeof(attr));
+	attr.mq_flags = O_RDWR;
+	attr.mq_maxmsg = 10;
+	attr.mq_msgsize = sizeof(mq_payload_heartbeat_t);
+
+	mq_heartbeat = mq_open(MQ_HEARTBEAT_ID, O_CREAT | O_RDWR| O_NONBLOCK, S_IRUSR | S_IWUSR| S_IROTH| S_IWOTH, &attr);
+
+	if(mq_heartbeat < 0)
+		perror("Heartbeat Message Queue");
+
+	attr.mq_msgsize = 64 * sizeof(char);
+
+	mq_logger = mq_open(MQ_LOGGER_ID, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, &attr);
+
+	if(mq_logger < 0)
+		perror("Logger Queue");
+
+	attr.mq_msgsize = sizeof(mq_temp_light_payload_t);
+
+	mq_light = mq_open(MQ_LIGHT_TASK_ID, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, &attr);
+
+	if(mq_light < 0)
+		perror("Light Queue");
+
+	mq_temp = mq_open(MQ_TEMP_TASK_ID, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, &attr);
+
+	if(mq_temp < 0)
+		perror("Temperature Queue");
+
+	attr.mq_msgsize = 64 * sizeof(char);
+
+	mq_sock_comm = mq_open(MQ_SOCK_COMM_TASK_ID, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, &attr);
+
+	if(mq_sock_comm < 0)
+		perror("Socket Responder Queue");
 }

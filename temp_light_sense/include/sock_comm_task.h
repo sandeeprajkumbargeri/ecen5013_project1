@@ -11,7 +11,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <mqueue.h>
-#include "../main.h"
 
 #define COMMAND_TEMP_READ_TLOW                0x01
 #define COMMAND_TEMP_READ_THIGH               0x02
@@ -35,21 +34,15 @@
 #define COMMAND_LIGHT_SET_INTG_TIME_2         0x12
 #define COMMAND_LIGHT_READ_INTG_TIME          0x13
 #define COMMAND_LIGHT_READ_GAIN               0x14
-#define COMMAND_LIGHT_SET_GAIN_HIGH           0x15
-#define COMMAND_LIGHT_SET_GAIN_LOW            0x16
-#define COMMAND_LIGHT_SET_INT_ENABLE          0x17
-#define COMMAND_LIGHT_SET_INT_DISABLE         0x18
+#define COMMAND_LIGHT_SET_GAIN_HIGH           0x16
+#define COMMAND_LIGHT_SET_GAIN_LOW            0x15
+#define COMMAND_LIGHT_SET_INT_ENABLE          0x18
+#define COMMAND_LIGHT_SET_INT_DISABLE         0x17
 #define COMMAND_LIGHT_READ_IDENTIFY_REG       0x19
 #define COMMAND_LIGHT_READ_INT_TRSHLD_LOW     0x1A
 #define COMMAND_LIGHT_READ_INT_TRSHLD_HIGH    0x1B
 #define COMMAND_LIGHT_SET_INT_TRSHLD_LOW      0x1C
 #define COMMAND_LIGHT_SET_INT_TRSHLD_HIGH     0x1D
 
-
+void *sock_comm_task_thread(void *);
 void errExit(char *);
-
-typedef struct comm_payload
-{
-  unsigned char command;
-  unsigned short data;
-} comm_payload_t;
