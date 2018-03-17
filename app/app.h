@@ -31,7 +31,6 @@
 #define COMMAND_TEMP_SET_CONV_RATE_3          0x0E
 #define COMMAND_TEMP_READ_CONV_RATE           0x0F
 
-
 #define COMMAND_LIGHT_SET_INTG_TIME_0         0x10
 #define COMMAND_LIGHT_SET_INTG_TIME_1         0x11
 #define COMMAND_LIGHT_SET_INTG_TIME_2         0x12

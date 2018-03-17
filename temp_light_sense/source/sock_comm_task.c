@@ -1,27 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <string.h>
-#include <sys/wait.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <ctype.h>
-#include <stdbool.h>
-
-#define COMMAND_GET_TEMP_DATA   0x01
-#define COMMAND_GET_LIGHT_DATA  0x02
-
-void errExit(char *);
+#include "../include/sock_comm_task.h"
 
 
-int main(void)
+void *sock_comm_task_thread(void *args)
 {
   int remote_sock = 0;
   char sockaddr_path[32];
-  char request, response[64];
+  char response[64];
   struct sockaddr_un app_sockaddr, remote_sockaddr;
   socklen_t sockaddr_length;
+  comm_payload_t request;
 
   remote_sock = socket(AF_UNIX, SOCK_DGRAM, 0);     //create a datagram socket
 
@@ -44,17 +31,33 @@ int main(void)
 
   while(1)
   {
+    bzero(&request, sizeof(request));
+
     if(recvfrom(remote_sock, (void *) &request, sizeof(request), 0, (struct sockaddr *) &app_sockaddr, &sockaddr_length) < 0)
       errExit("## ERROR ## Receiving request from app: ");
 
+    if(request.command > 0x00 && request.command < 0x10)
+    {
+      if(mq_send(mq_temp, (const char *) &request, sizeof(comm_payload_t), 0) < 0)
+        errExit("Error Sending Request to Temp Task");
+
+      temp_asynch = true;
+      sem_post(&sem_temp);
+    }
+
+    if(request.command > 0x0F && request.command < 0x1E)
+    {
+      if(mq_send(mq_light, (const char *) &request, sizeof(comm_payload_t), 0) < 0)
+        errExit("Error Sending Request to Light Task");
+
+      light_asynch = true;
+      sem_post(&sem_light);
+    }
+
     bzero(response, sizeof(response));
 
-    if(request == COMMAND_GET_TEMP_DATA)
-      strcpy(response, "Temperature = 30 C");
-    else if(request == COMMAND_GET_LIGHT_DATA)
-      strcpy(response, "Light = Turned ON");
-
-    printf("Response = %s.\n", response);
+    if(mq_receive(mq_sock_comm, (char *) &response, sizeof(response), 0) < 0)
+      errExit("Error receiving response");
 
     if(sendto(remote_sock, (const void *) response, sizeof(response), 0, (const struct sockaddr *) &app_sockaddr, sockaddr_length) < 0)
       errExit("## ERROR ## Sending response to app: ");
@@ -67,3 +70,58 @@ void errExit(char *strError)
   perror(strError);
   exit(EXIT_FAILURE);
 }
+
+
+/*i2c_request_t parse_request(comm_payload_t request)
+{
+  i2c_request_t parsed;
+  bzero(&parsed, sizeof(parsed));
+
+  switch(request.command)
+  {
+    case COMMAND_TEMP_READ_TLOW:
+        set_parsed_data(TEMP, READ, ADDRESS_TEMP_TLOW_REG, 0, 0);
+        break;
+    case COMMAND_TEMP_READ_THIGH:
+      set_parsed_data(TEMP, READ, ADDRESS_TEMP_THIGH_REG, 0, 0);
+      break;
+    case COMMAND_TEMP_READ_DATA_REG:
+      set_parsed_data(TEMP, READ, ADDRESS_TEMP_TEMP_REG, 0, 0);
+      break;
+    case COMMAND_TEMP_SET_SD_ON:
+      set_parsed_data(TEMP, WRITE, ADDRESS_TEMP_CONF_REG, 0x0100, OR);
+      break;
+    case COMMAND_TEMP_SET_SD_OFF:
+      set_parsed_data(TEMP, WRITE, ADDRESS_TEMP_CONF_REG, 0xFEFF, AND);
+      break;
+    case COMMAND_TEMP_READ_RESOLUTION:
+      set_parsed_data(TEMP, WRITE, ADDRESS_TEMP_CONF_REG, 0xFEFF, AND);
+      break;
+    case COMMAND_TEMP_READ_FAULT_BITS:
+    case COMMAND_TEMP_READ_EM:
+    case COMMAND_TEMP_SET_EM_ON:
+    case COMMAND_TEMP_SET_EM_OFF:
+
+    case COMMAND_TEMP_SET_CONV_RATE_0:
+    case COMMAND_TEMP_SET_CONV_RATE_1:
+    case COMMAND_TEMP_SET_CONV_RATE_2:
+    case COMMAND_TEMP_SET_CONV_RATE_3:
+    case COMMAND_TEMP_READ_CONV_RATE:
+
+
+    case COMMAND_LIGHT_SET_INTG_TIME_0:
+    case COMMAND_LIGHT_SET_INTG_TIME_1:
+    case COMMAND_LIGHT_SET_INTG_TIME_2:
+    case COMMAND_LIGHT_READ_INTG_TIME:
+    case COMMAND_LIGHT_READ_GAIN:
+    case COMMAND_LIGHT_SET_GAIN_HIGH:
+    case COMMAND_LIGHT_SET_GAIN_LOW:
+    case COMMAND_LIGHT_SET_INT_ENABLE:
+    case COMMAND_LIGHT_SET_INT_DISABLE:
+    case COMMAND_LIGHT_READ_IDENTIFY_REG:
+    case COMMAND_LIGHT_READ_INT_TRSHLD_LOW:
+    case COMMAND_LIGHT_READ_INT_TRSHLD_HIGH:
+    case COMMAND_LIGHT_SET_INT_TRSHLD_LOW:
+    case COMMAND_LIGHT_SET_INT_TRSHLD_HIGH:
+  }
+}*/

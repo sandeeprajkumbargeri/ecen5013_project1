@@ -46,6 +46,7 @@ void *light_sense_task_thread(void *args)
 	int i2c_bus_desc, bus_number, retval;
 	int32_t adc0, adc1;
 	float ambient_lux;
+	mq_payload_heartbeat_t light_heartbeat;
 
 	printf("Devudaa");
 	fflush(stdout);
@@ -77,11 +78,18 @@ void *light_sense_task_thread(void *args)
 		pthread_exit(&retval);
 	}
 	printf("I am also here");
-	while(1)
+
+  bzero(&light_heartbeat, sizeof(light_heartbeat));
+	light_heartbeat.sender_id = LIGHT_TASK_ID;
+	light_heartbeat.heartbeat_status = true;
+
+
+  while(1)
 	{
 		sem_wait(&sem_light);
 		sem_post(&sem_light);
-		if(light_read)
+
+    if(light_read)
 		{
 			sem_wait(&sem_light);
 			light_read = false;
@@ -108,6 +116,17 @@ void *light_sense_task_thread(void *args)
 			ambient_lux = calculate_ambient_lux((uint16_t) adc0, (uint16_t) adc1);
 			printf("The Ambient Light Lux is %2.4f\n", ambient_lux);
 			fflush(stdout);
+
+
+      if(send_heartbeat[LIGHT_TASK_ID])
+      {
+              if(mq_send(mq_heartbeat, (char *) &light_heartbeat, sizeof(light_heartbeat), 1) < 0)
+              {
+                      perror("\nTEMP TASK: Unable to send heartbeat.\n");
+              }
+              send_heartbeat[LIGHT_TASK_ID] = false;
+      }
+
 		}
 	}
-}	
+}

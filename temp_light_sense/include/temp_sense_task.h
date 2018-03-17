@@ -5,6 +5,6 @@
 #define THRESHOLD_LOW	15
 
 void *temp_sense_task_thread(void *args);
+//void service_request(comm_payload_t, char *);
 
 #endif
-
