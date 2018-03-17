@@ -5,7 +5,7 @@ int main(void)
 {
   int app_sock = 0;
   char app_sockaddr_path[32], remote_sockaddr_path[32];
-  char command[16], response[64];
+  char command[64], response[64];
   struct sockaddr_un app_sockaddr, remote_sockaddr;
   socklen_t sockaddr_length;
   unsigned short int threshold = 0;
@@ -125,6 +125,7 @@ void signal_handler(int signal)
 
 void command_list_init(void)
 {
+  bzero(command_list, sizeof(command_list));
   strcpy(command_list[COMMAND_HELP], "help");
   strcpy(command_list[COMMAND_TEMP_READ_TLOW], "temp read t-low");
   strcpy(command_list[COMMAND_TEMP_READ_THIGH], "temp read t-high");
