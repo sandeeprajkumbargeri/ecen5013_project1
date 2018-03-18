@@ -1,239 +1,43 @@
-Sun Mar 18 05:30:06 2018 :: ## MAIN ## Successfully setup message queues.
-Sun Mar 18 05:30:06 2018 :: ## MAIN ## Successfully setup semaphores.
-Sun Mar 18 05:30:06 2018 :: ## MAIN ## Successfully setup timer with 1 sec 0 msec expiry time.
-Sun Mar 18 05:30:06 2018 :: ## MAIN ## Successfully created all the threads.
-Sun Mar 18 05:30:06 2018 :: ## LIGHT ## Successfully configured the light sensor. Ready for notifying heartbeat.
-Sun Mar 18 05:30:06 2018 :: ## TEMP ## Successfully configured temperature sensor. Ready for notifying heartbeat.
-Sun Mar 18 05:30:07 2018 :: ## STARTUP TEST ##
-Start up tests are beginning.
-Sun Mar 18 05:30:07 2018 :: ## STARTUP TEST ## Temperature Sensor: StartUp Succesful.
-Sun Mar 18 05:30:07 2018 :: ## STARTUP TEST ## Light Sensor: StartUp Succesful.
-Sun Mar 18 05:30:07 2018 :: ## STARTUP TEST ## Receiving heartbeats...
-Sun Mar 18 05:30:07 2018 :: ## STARTUP TEST ## Light Sensor Task: StartUp Succesful.
-Sun Mar 18 05:30:07 2018 :: ## STARTUP TEST ## Temperature Sesnor Task: StartUp Succesful.
-Sun Mar 18 05:30:07 2018 :: ## STARTUP TEST ## Logger Task: StartUp Succesful.
-Sun Mar 18 05:30:07 2018 :: ## STARTUP TEST ## Socket Communication Task: StartUp Succesful.
-Sun Mar 18 05:30:08 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:30:08 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:08 2018 :: ## MAIN ## Received heartbeat from Temperature Sesnor Task. Status: good.
-Sun Mar 18 05:30:09 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:30:09 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:09 2018 :: ## MAIN ## Received heartbeat from Light Sensor Task. Status: good.
-Sun Mar 18 05:30:10 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:11 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:12 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:13 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:14 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:15 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:16 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:17 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:30:17 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:30:17 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:30:17 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:30:17 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:17 2018 :: ## MAIN ## Received heartbeat from Light Sensor Task. Status: good.
-Sun Mar 18 05:30:18 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:30:18 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:18 2018 :: ## MAIN ## Received heartbeat from Temperature Sesnor Task. Status: good.
-Sun Mar 18 05:30:19 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:30:19 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:20 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:21 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:22 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:23 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:24 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:25 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:26 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:27 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:30:27 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:30:27 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:30:27 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:30:27 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:27 2018 :: ## MAIN ## Received heartbeat from Light Sensor Task. Status: good.
-Sun Mar 18 05:30:28 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:30:28 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:28 2018 :: ## MAIN ## Received heartbeat from Temperature Sesnor Task. Status: good.
-Sun Mar 18 05:30:29 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:30:29 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:30 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:31 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:32 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:33 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:34 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:35 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:36 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:37 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:30:37 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:30:37 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:30:37 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:37 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:30:37 2018 :: ## MAIN ## Received heartbeat from Light Sensor Task. Status: good.
-Sun Mar 18 05:30:38 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:30:38 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:38 2018 :: ## MAIN ## Received heartbeat from Temperature Sesnor Task. Status: good.
-Sun Mar 18 05:30:39 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:30:39 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:40 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:41 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:42 2018 :: ## SOCK COMM ## Received request from external application. Success
-Sun Mar 18 05:30:42 2018 :: ## TEMP ## Asynchronous request received.
-Sun Mar 18 05:30:42 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:30:43 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:45 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:47 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:30:47 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:30:47 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:30:47 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:30:47 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:47 2018 :: ## MAIN ## Received heartbeat from Light Sensor Task. Status: good.
-Sun Mar 18 05:30:48 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:30:49 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:30:49 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:51 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:53 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:55 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:57 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:30:57 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:30:57 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:30:57 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:30:57 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:30:57 2018 :: ## MAIN ## Received heartbeat from Light Sensor Task. Status: good.
-Sun Mar 18 05:30:58 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:30:59 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:30:59 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:01 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:03 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:05 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:07 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:31:07 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:31:07 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:31:07 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:31:07 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:07 2018 :: ## MAIN ## Received heartbeat from Light Sensor Task. Status: good.
-Sun Mar 18 05:31:08 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:31:09 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:31:09 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:11 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:13 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:15 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:17 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:31:17 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:31:17 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:31:17 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:31:17 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:17 2018 :: ## MAIN ## Received heartbeat from Light Sensor Task. Status: good.
-Sun Mar 18 05:31:18 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:31:19 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:31:19 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:21 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:23 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:25 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:27 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:31:27 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:31:27 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:31:27 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:31:27 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:27 2018 :: ## MAIN ## Received heartbeat from Light Sensor Task. Status: good.
-Sun Mar 18 05:31:28 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:31:29 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:31:29 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:29 2018 :: ## SOCK COMM ## Received request from external application. Success
-Sun Mar 18 05:31:29 2018 :: ## TEMP ## Asynchronous request received.
-Sun Mar 18 05:31:29 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:31:29 2018 :: ## MAIN ## Received heartbeat from Temperature Sesnor Task. Status: good.
-Sun Mar 18 05:31:31 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:33 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:35 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:37 2018 :: ## SOCK COMM ## Received request from external application. Success
-Sun Mar 18 05:31:37 2018 :: ## TEMP ## Asynchronous request received.
-Sun Mar 18 05:31:37 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:31:37 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:31:37 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:31:37 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:31:37 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:37 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:31:37 2018 :: ## MAIN ## Received heartbeat from Light Sensor Task. Status: good.
-Sun Mar 18 05:31:38 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:31:39 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:31:39 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:41 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:43 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:45 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:47 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:31:47 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:31:47 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:31:47 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:31:47 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:47 2018 :: ## MAIN ## Received heartbeat from Light Sensor Task. Status: good.
-Sun Mar 18 05:31:48 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:31:49 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:31:49 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:51 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:52 2018 :: ## SOCK COMM ## Received request from external application. Success
-Sun Mar 18 05:31:52 2018 :: ## TEMP ## Asynchronous request received.
-Sun Mar 18 05:31:52 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:31:52 2018 :: ## MAIN ## Received heartbeat from Temperature Sesnor Task. Status: good.
-Sun Mar 18 05:31:53 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:55 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:57 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:31:57 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:31:57 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:31:57 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:31:57 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:31:57 2018 :: ## MAIN ## Received heartbeat from Light Sensor Task. Status: good.
-Sun Mar 18 05:31:58 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:31:59 2018 :: ## SOCK COMM ## Received request from external application. Success
-Sun Mar 18 05:31:59 2018 :: ## TEMP ## Asynchronous request received.
-Sun Mar 18 05:31:59 2018 :: ## TEMP ## Recurring acquisition. Temperature: 27.1250
-Sun Mar 18 05:31:59 2018 :: ## MAIN ## Received heartbeat from Temperature Sesnor Task. Status: good.
-Sun Mar 18 05:31:59 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:31:59 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:32:01 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:32:03 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:32:05 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:32:07 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:32:07 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:32:07 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:32:07 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:32:07 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:32:07 2018 :: ## MAIN ## Received heartbeat from Light Sensor Task. Status: good.
-Sun Mar 18 05:32:08 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:32:09 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:32:09 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:32:11 2018 :: ## SOCK COMM ## Received request from external application. Success
-Sun Mar 18 05:32:11 2018 :: ## LIGHT ## Asynchronous request received.
-Sun Mar 18 05:32:11 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
-Sun Mar 18 05:32:17 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:32:17 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:32:17 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:32:17 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:32:18 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:32:19 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:32:27 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:32:27 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:32:27 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:32:27 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:32:28 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:32:29 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:32:37 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:32:37 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:32:37 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:32:37 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:32:38 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:32:39 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:32:47 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:32:47 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:32:47 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:32:47 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:32:48 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:32:49 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:32:57 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:32:57 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:32:57 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:32:57 2018 :: ## MAIN ## Socket Communication Task is still alive.
-Sun Mar 18 05:32:58 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
-Sun Mar 18 05:32:59 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
-Sun Mar 18 05:33:07 2018 :: ## MAIN ## Light Sensor Task is still alive.
-Sun Mar 18 05:33:07 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
-Sun Mar 18 05:33:07 2018 :: ## MAIN ## Logger Task is still alive.
-Sun Mar 18 05:33:07 2018 :: ## MAIN ## Socket Communication Task is still alive.
+Sun Mar 18 05:35:57 2018 :: ## MAIN ## Light Sensor Task is still alive.
+Sun Mar 18 05:35:57 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
+Sun Mar 18 05:35:57 2018 :: ## MAIN ## Logger Task is still alive.
+Sun Mar 18 05:35:57 2018 :: ## MAIN ## Socket Communication Task is still alive.
+Sun Mar 18 05:35:58 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
+Sun Mar 18 05:35:59 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
+Sun Mar 18 05:36:07 2018 :: ## MAIN ## Light Sensor Task is still alive.
+Sun Mar 18 05:36:07 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
+Sun Mar 18 05:36:07 2018 :: ## MAIN ## Logger Task is still alive.
+Sun Mar 18 05:36:07 2018 :: ## MAIN ## Socket Communication Task is still alive.
+Sun Mar 18 05:36:08 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
+Sun Mar 18 05:36:09 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
+Sun Mar 18 05:36:17 2018 :: ## MAIN ## Light Sensor Task is still alive.
+Sun Mar 18 05:36:17 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
+Sun Mar 18 05:36:17 2018 :: ## MAIN ## Logger Task is still alive.
+Sun Mar 18 05:36:17 2018 :: ## MAIN ## Socket Communication Task is still alive.
+Sun Mar 18 05:36:18 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
+Sun Mar 18 05:36:19 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
+Sun Mar 18 05:36:27 2018 :: ## MAIN ## Light Sensor Task is still alive.
+Sun Mar 18 05:36:27 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
+Sun Mar 18 05:36:27 2018 :: ## MAIN ## Logger Task is still alive.
+Sun Mar 18 05:36:27 2018 :: ## MAIN ## Socket Communication Task is still alive.
+Sun Mar 18 05:36:28 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
+Sun Mar 18 05:36:29 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
+Sun Mar 18 05:36:37 2018 :: ## MAIN ## Light Sensor Task is still alive.
+Sun Mar 18 05:36:37 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
+Sun Mar 18 05:36:37 2018 :: ## MAIN ## Logger Task is still alive.
+Sun Mar 18 05:36:37 2018 :: ## MAIN ## Socket Communication Task is still alive.
+Sun Mar 18 05:36:38 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
+Sun Mar 18 05:36:39 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
+Sun Mar 18 05:36:47 2018 :: ## MAIN ## Light Sensor Task is still alive.
+Sun Mar 18 05:36:47 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
+Sun Mar 18 05:36:47 2018 :: ## MAIN ## Logger Task is still alive.
+Sun Mar 18 05:36:47 2018 :: ## MAIN ## Socket Communication Task is still alive.
+Sun Mar 18 05:36:48 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
+Sun Mar 18 05:36:49 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
+Sun Mar 18 05:36:57 2018 :: ## MAIN ## Light Sensor Task is still alive.
+Sun Mar 18 05:36:57 2018 :: ## MAIN ## Temperature Sesnor Task is still alive.
+Sun Mar 18 05:36:57 2018 :: ## MAIN ## Logger Task is still alive.
+Sun Mar 18 05:36:57 2018 :: ## MAIN ## Socket Communication Task is still alive.
+Sun Mar 18 05:36:58 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
+Sun Mar 18 05:36:59 2018 :: ## MAIN ## Received heartbeat from Socket Communication Task. Status: good.
+Sun Mar 18 05:37:07 2018 :: ## MAIN ## Light Sensor Task is still alive.
