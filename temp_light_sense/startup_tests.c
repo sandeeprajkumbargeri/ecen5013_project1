@@ -15,7 +15,7 @@ int test_light_sensor(int i2c_bus_desc)
 
     if(retval < 0)
     {
-            printf("Error accessing I2C slave device: %s", strerror(errno));
+            //printf("Error accessing I2C slave device: %s", strerror(errno));
             i2c_bus_free();
             return -1;
     }
@@ -25,7 +25,7 @@ int test_light_sensor(int i2c_bus_desc)
 
     if(retval < 0)
     {
-            printf("\nLight Sensor is not working: %s\n", strerror(errno));
+            //printf("\nLight Sensor is not working: %s\n", strerror(errno));
             i2c_bus_free();
             return -1;
     }
@@ -33,7 +33,7 @@ int test_light_sensor(int i2c_bus_desc)
 
     if(retval < 0)
     {
-            printf("\nLight Sensor is not working: %s\n", strerror(errno));
+            //printf("\nLight Sensor is not working: %s\n", strerror(errno));
             i2c_bus_free();
             return -1;
     }
@@ -42,12 +42,12 @@ int test_light_sensor(int i2c_bus_desc)
 
     if(thresh_low_reg == 25)
     {
-            printf("\nLight Sensor is functional\n");
+            //printf("\nLight Sensor is functional\n");
             retval = 0;
     }
     else
     {
-            printf("\n The light sensor is not functional:%s\n", strerror(errno));
+            //printf("\nThe light sensor is not functional: %s\n", strerror(errno));
             retval = -1;
     }
 
@@ -65,7 +65,7 @@ int test_temp_sensor(int i2c_bus_desc)
 
   if(retval < 0)
   {
-      printf("Error accessing I2C slave device: %s", strerror(errno));
+      //printf("Error accessing I2C slave device: %s", strerror(errno));
       i2c_bus_free();
       return -1;
   }
@@ -74,7 +74,7 @@ int test_temp_sensor(int i2c_bus_desc)
 
   if(retval < 0)
   {
-      printf("\nTemperature Sensor is not working: %s\n", strerror(errno));
+      //printf("\nTemperature Sensor is not working: %s\n", strerror(errno));
       i2c_bus_free();
       return -1;
   }
@@ -83,20 +83,20 @@ int test_temp_sensor(int i2c_bus_desc)
 
 	if(retval < 0)
 	{
-		printf("\nTemperature Sensor is not working: %s\n", strerror(errno));
+		//printf("\nTemperature Sensor is not working: %s\n", strerror(errno));
 		i2c_bus_free();
 		return -1;
 	}
 
 	if(temperature == 25.0)
 	{
-                printf("\nTemperature Sensor is functional\n");
+                //printf("\nTemperature Sensor is functional\n");
                 retval = 0;
 	}
 
   else
 	{
-		printf("\n The temperature sensor is not functional:%s\n", strerror(errno));
+		//printf("\n The temperature sensor is not functional:%s\n", strerror(errno));
 		retval = -1;
 	}
 

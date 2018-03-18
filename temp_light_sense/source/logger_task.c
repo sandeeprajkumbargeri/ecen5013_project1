@@ -25,7 +25,7 @@ void *logger_task_thread(void *args)
 
   pthread_create(&logger_heartbeat_notifier_desc, NULL, logger_heartbeat_notifier, (void *) NULL);
 
-  while(1)
+  while(!close_app)
   {
     if(mq_receive(mq_logger, (char *) log_info, sizeof(log_info), 0) < 0)
       perror("## LOGGER ## Message Queue Receive");
@@ -43,6 +43,12 @@ void *logger_task_thread(void *args)
     //length = fwrite(log_info, sizeof(char), strlen(log_info), log_file);
     fclose(log_file);
   }
+  fclose(log_file);
+  bzero(log_info, sizeof(log_info));
+  sprintf(log_info, "## LOGGER ## Exiting the logger thread. I received an exit request");
+  fprintf(log_file, "%s\n", log_info);
+  pthread_join(logger_heartbeat_notifier_desc, NULL);
+  pthread_exit(0);
 }
 
 void update_time(char *current_time, size_t length)
@@ -66,7 +72,7 @@ void *logger_heartbeat_notifier(void *args)
   logger_heartbeat.sender_id = LOGGER_TASK_ID;
   logger_heartbeat.heartbeat_status = true;
 
-  while(1)
+  while(!close_app)
   {
     sem_wait(&sem_logger);
 
@@ -82,4 +88,8 @@ void *logger_heartbeat_notifier(void *args)
         send_heartbeat[LOGGER_TASK_ID] = false;
     }
   }
+  bzero(log_message, sizeof(log_message));
+  sprintf(log_message, "## LOGGER ## Exiting the logger thread. %s", strerror(errno));
+  LOG(mq_logger, log_message);
+  pthread_exit(0);
 }

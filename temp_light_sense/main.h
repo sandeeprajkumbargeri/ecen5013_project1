@@ -64,6 +64,7 @@ extern bool light_read;
 extern bool temp_read;
 extern bool temp_asynch;
 extern bool light_asynch;
+extern bool close_app;
 
 extern struct sigevent heartbeat_sevp;
 

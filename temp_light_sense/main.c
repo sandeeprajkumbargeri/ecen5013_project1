@@ -29,167 +29,7 @@
 #include "include/logger_task.h"
 #include "include/sock_comm_task.h"
 #include "startup_tests.h"
-
-/*
-int bus_number = 2;
-#include "include/tmp_102_driver.h"
-#include <poll.h>
-
-int GPIO_Interrupt_Setup()
-{
-	int retval, gpio_desc;
-	char buf[10];
-	gpio_desc = open("/sys/class/gpio/export", O_WRONLY);
-	if(gpio_desc < 0)
-	{
-		printf("Error opening sys/class/gpio/export file. So can't reserve a GPIO pin%s", strerror(errno));
-		return -1;
-	}
-
-	bzero(buf, sizeof(buf));
-	sprintf(buf, "%d", GPIO_INTERRUPT_PIN);
-
-	retval = write(gpio_desc, buf, strlen(buf));
-	if(retval < 0)
-	{
-		printf("Error reserving GPIO%d pin: %s", GPIO_INTERRUPT_PIN, strerror(errno));
-		gpio_desc = open("/sys/class/gpio/unexport", O_WRONLY);
-		sprintf(buf, "%d", GPIO_INTERRUPT_PIN);
-		retval = write(gpio_desc, buf, strlen(buf));
-		return -1;
-	}
-
-	bzero(buf, sizeof(buf));
-
-	sprintf(buf, "/sys/class/gpio/gpio%d/direction", GPIO_INTERRUPT_PIN);
-
-	gpio_desc = open(buf, O_WRONLY);
-	if(gpio_desc < 0)
-	{
-		printf("Error opening %s file. So can't set the direction of the GPIO pin");
-		gpio_desc = open("/sys/class/gpio/unexport", O_WRONLY);
-		sprintf(buf, "%d", GPIO_INTERRUPT_PIN);
-		retval = write(gpio_desc, buf, strlen(buf));
-		return -1;
-	}
-	bzero(buf, sizeof(buf));
-	sprintf(buf, "in");
-	retval = write(gpio_desc, buf, strlen(buf));
-	if(retval < 0)
-	{
-                printf("Error opening %s file. So can't set the direction of the GPIO pin");
-                gpio_desc = open("/sys/class/gpio/unexport", O_WRONLY);
-                sprintf(buf, "%d", GPIO_INTERRUPT_PIN);
-                retval = write(gpio_desc, buf, strlen(buf));
-                return -1;
-	}
-
-        sprintf(buf, "/sys/class/gpio/gpio%d/edge", GPIO_INTERRUPT_PIN);
-
-        gpio_desc = open(buf, O_WRONLY);
-        if(gpio_desc < 0)
-        {
-                printf("Error opening %s file. So can't set the GPIO pin in edge triggered interrupt mode");
-                gpio_desc = open("/sys/class/gpio/unexport", O_WRONLY);
-                sprintf(buf, "%d", GPIO_INTERRUPT_PIN);
-                retval = write(gpio_desc, buf, strlen(buf));
-                return -1;
-        }
-        bzero(buf, sizeof(buf));
-        sprintf(buf, "both");
-        retval = write(gpio_desc, buf, strlen(buf));
-        if(retval < 0)
-        {
-                printf("Error opening %s file. So can't set the GPIO pin in edge triggered interrupt mode");
-                gpio_desc = open("/sys/class/gpio/unexport", O_WRONLY);
-                sprintf(buf, "%d", GPIO_INTERRUPT_PIN);
-                retval = write(gpio_desc, buf, strlen(buf));
-                return -1;
-        }
-	return gpio_desc;
-
-}
-
-int GPIO_Interrupt_Scan_Thread(int i2c_bus_desc)
-{
-	int gpio_desc, retval;
-	struct pollfd gpio_pollfd;
-	float temperature;
-
-	gpio_desc = GPIO_Interrupt_Setup();
-	if(gpio_desc < 0)
-	{
-		return -1;
-	}
-
-	gpio_pollfd.fd = gpio_desc;
-	gpio_pollfd.events = POLLPRI|POLLERR;
-
-	while(1)
-	{
-		poll(&gpio_pollfd, 1, -1);
-		if(gpio_pollfd.revents|POLLPRI)
-		{
-		        retval = tmp_102_read_temperature_reg(i2c_bus_desc, &temperature);
-        	        printf("\nThe temperature is %2.4f", temperature);
-		}
-	}
-}*/
-/*
-int main()
-{
-
-	int i2c_bus_desc, retval;
-	uint16_t config_write, config_read;
-	float temperature;
-
-	config_write = 0;
-
-	config_read = 150;
-
-        i2c_bus_desc = i2c_bus_init(bus_number);
-
-        if(i2c_bus_desc < 0)
-        {
-                printf("Error opening a i2c character device file: %s", strerror(errno));
-                return 1;
-        }
-
-/*
-	tmp_102_write_config_reg(i2c_bus_desc, config_write);
-	tmp_102_read_config_reg(i2c_bus_desc, &config_read);
-
-	printf("The config register is %04x It is written as %04x", config_write, config_read);
-*/
-/*	tmp_102_init(i2c_bus_desc);
-
-	temperature = 30.0625;
-
-	retval = tmp_102_write_TLow_reg(i2c_bus_desc, temperature);
-	temperature = 0;
-	retval = tmp_102_read_TLow_reg(i2c_bus_desc, &temperature);
-
-	printf("\nThe Lower threshold for temperature is %2.4f", temperature);
-
-	temperature = 40.0625;
-
-	retval = tmp_102_write_THigh_reg(i2c_bus_desc, temperature);
-	temperature = 0;
-	retval = tmp_102_read_THigh_reg(i2c_bus_desc, &temperature);
-
-	printf("\nThe Higher threshold for temperature is %2.4f", temperature);
-
-//        i2c_bus_desc = i2c_bus_init(bus_number);
-
-	retval = tmp_102_read_temperature_reg(i2c_bus_desc, &temperature);
-	if(retval > 0)
-	{
-		printf("\nThe temperature is %2.4f", temperature);
-	}
-	GPIO_Interrupt_Scan_Thread(i2c_bus_desc);
-	return 0;
-}
-*/
+#include <sys/signal.h>
 
 pthread_t logger_task;
 pthread_t temp_sense_task;
@@ -208,12 +48,17 @@ bool send_heartbeat[4] = {true};
 
 char task_name[4][30];
 char filename[30];
+bool close_app = false;
 
 struct sigevent heartbeat_sevp;
 
 sem_t sem_light, sem_temp, sem_logger, sem_sock_comm;
 mqd_t mq_light, mq_temp, mq_logger, mq_sock_comm, mq_heartbeat;
 
+void signal_handler(int signal)
+{
+  close_app = true;
+}
 
 int main (int argc, char *argv[])
 {
@@ -224,6 +69,8 @@ int main (int argc, char *argv[])
 	int retval;
 	mq_payload_heartbeat_t heartbeat;
 	char log_message[128] = {0};
+
+	signal(SIGINT, signal_handler);
 
 	if (argc != 2)
   {
@@ -294,6 +141,7 @@ int main (int argc, char *argv[])
 	strcpy(log_message, "## MAIN ## Successfully created all the threads.");
 	LOG(mq_logger, log_message);
 
+	sleep(1);
 	startup_tests(mq_heartbeat, task_heartbeat, sensor_alive);
 
 	tspec.it_value.tv_sec = TIMER_EXPIRY_S;
@@ -306,7 +154,7 @@ int main (int argc, char *argv[])
 	timer_settime(timer_id, 0, &tspec, 0);
 
 
-	while(1)
+	while(!close_app)
 	{
 		retval = mq_receive(mq_heartbeat, (char *) &heartbeat, sizeof(heartbeat), NULL);
 
@@ -319,6 +167,27 @@ int main (int argc, char *argv[])
 			LOG(mq_logger, log_message);
 		}
 	}
+
+	printf("\n## SIGINT ## Clean up threads, semaphores and message queues.\n");
+
+	pthread_join(logger_task, NULL);
+	pthread_join(temp_sense_task, NULL);
+	pthread_join(light_sense_task, NULL);
+	pthread_join(sock_comm_task, NULL);
+
+	mq_unlink(MQ_LOGGER_ID);
+	mq_unlink(MQ_HEARTBEAT_ID);
+	mq_unlink(MQ_LIGHT_TASK_ID);
+	mq_unlink(MQ_TEMP_TASK_ID);
+	mq_unlink(MQ_SOCK_COMM_TASK_ID);
+
+	sem_destroy(&sem_logger);
+	sem_destroy(&sem_light);
+	sem_destroy(&sem_temp);
+	sem_destroy(&sem_sock_comm);
+
+	printf("\n## SIGINT ## Process exiting successfully.\n");
+	exit(EXIT_SUCCESS);
 }
 
 

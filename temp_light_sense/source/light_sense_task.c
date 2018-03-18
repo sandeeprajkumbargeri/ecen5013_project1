@@ -105,7 +105,7 @@ void *light_sense_task_thread(void *args)
   sprintf(log_message, "## LIGHT ## Successfully configured the light sensor. Ready for notifying heartbeat.");
   LOG(mq_logger, log_message);
 
-  while(1)
+  while(!close_app)
 	{
 		sem_wait(&sem_light);
 		sem_post(&sem_light);
@@ -179,6 +179,10 @@ void *light_sense_task_thread(void *args)
 			light_service_request(&request, response, i2c_bus_desc);
 		}
 	}
+  bzero(log_message, sizeof(log_message));
+  sprintf(log_message, "## LIGHT ## Exiting the sock comm thread(task). Received an exit request");
+  fprintf(log_file, "%s", log_message);
+  pthread_exit(0);
 }
 
 

@@ -77,7 +77,7 @@ void *temp_sense_task_thread(void *args)
 	sprintf(log_message, "## TEMP ## Successfully configured temperature sensor. Ready for notifying heartbeat.");
 	LOG(mq_logger, log_message);
 
-	while(1)
+	while(!close_app)
 	{
 		sem_wait(&sem_temp);
   	sem_post(&sem_temp);
@@ -130,6 +130,10 @@ void *temp_sense_task_thread(void *args)
 				service_request(&request, response, i2c_bus_desc);
 		}
 	}
+	bzero(log_message, sizeof(log_message));
+	sprintf(log_message, "## TEMP ## Exiting the temperature thread(task). I received an exit request");
+	fprintf(log_file, "%s", log_message);
+	pthread_exit(0);
 }
 
 
@@ -155,25 +159,25 @@ void service_request(mq_temp_light_payload_t *request, char *response, int i2c_b
 	{
     		case COMMAND_TEMP_READ_TLOW:
 						tmp_102_read_TLow_reg(i2c_bus_desc, &TLow_reg);
-						sprintf(response, "T-Low Reg = %f.\n", TLow_reg);
+						sprintf(response, "T-Low Reg = %f\n", TLow_reg);
   					break;
 
 				case COMMAND_TEMP_READ_THIGH:
             tmp_102_read_TLow_reg(i2c_bus_desc, &TLow_reg);
-						sprintf(response, "T-High Reg = %f.\n", TLow_reg);
+						sprintf(response, "T-High Reg = %f\n", TLow_reg);
       			break;
 
 				case COMMAND_TEMP_READ_DATA_REG:
 	          retval = tmp_102_read_temperature_reg(i2c_bus_desc, &temperature);
 	          if(retval > 0)
-	          sprintf(response, "\nThe temperature is %2.4f", temperature);
+	          sprintf(response, "The temperature is %2.4f\n", temperature);
       			break;
 
 				case COMMAND_TEMP_SET_SD_ON:
             retval = tmp_102_read_config_reg(i2c_bus_desc, &config_reg);
             if(retval < 0)
             {
-                sprintf(response, "\nError setting SD mode on%s\n", strerror(errno));
+                sprintf(response, "Error setting SD mode on: %s\n", strerror(errno));
                 break;
             }
             config_reg = config_reg|SD_MASK;
@@ -181,18 +185,18 @@ void service_request(mq_temp_light_payload_t *request, char *response, int i2c_b
             retval = tmp_102_write_config_reg(i2c_bus_desc, config_reg);
             if(retval < 0)
             {
-                sprintf(response, "\nError setting SD mode on%s\n", strerror(errno));
+                sprintf(response, "Error setting SD mode on: %s\n", strerror(errno));
                 break;
             }
 
-						sprintf(response, "\nSD mode has been switced on\n");
+						sprintf(response, "SD mode has been switced on\n");
 						break;
 
 				case COMMAND_TEMP_SET_SD_OFF:
             retval = tmp_102_read_config_reg(i2c_bus_desc, &config_reg);
             if(retval < 0)
             {
-                sprintf(response, "\nError setting SD mode off%s\n", strerror(errno));
+                sprintf(response, "Error setting SD mode off: %s\n", strerror(errno));
                 break;
             }
             config_reg = config_reg&(~SD_MASK);
@@ -200,23 +204,23 @@ void service_request(mq_temp_light_payload_t *request, char *response, int i2c_b
             retval = tmp_102_write_config_reg(i2c_bus_desc, config_reg);
             if(retval < 0)
             {
-                sprintf(response, "\nError setting SD mode off%s\n", strerror(errno));
+                sprintf(response, "Error setting SD mode off: %s\n", strerror(errno));
                 break;
             }
 
-						sprintf(response, "\nSD mode has been switced off\n");
+						sprintf(response, "SD mode has been switced off\n");
       			break;
 
 				case COMMAND_TEMP_READ_RESOLUTION:
 						retval = tmp_102_read_config_reg(i2c_bus_desc, &config_reg);
 						if(retval < 0)
 						{
-							sprintf(response, "\nError reading resolution bits%s\n", strerror(errno));
+							sprintf(response, "Error reading resolution bits: %s\n", strerror(errno));
 							break;
 						}
 						read_value = (uint8_t)( (config_reg&RESOLUTION_MASK) >> 8);
 
-						sprintf(response, "\nThe converter resolution is %d\n", read_value);
+						sprintf(response, "The converter resolution is %d\n", read_value);
 						break;
 
 				case COMMAND_TEMP_READ_FAULT_BITS:

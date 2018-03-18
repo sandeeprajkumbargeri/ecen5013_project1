@@ -56,7 +56,7 @@ void *sock_comm_task_thread(void *args)
 
   pthread_create(&sock_comm_heartbeat_notifier_desc, NULL, sock_comm_heartbeat_notifier, (void *) NULL);
 
-  while(1)
+  while(!close_app)
   {
     bzero(&request, sizeof(request));
 
@@ -113,6 +113,11 @@ void *sock_comm_task_thread(void *args)
       LOG(mq_logger, log_message);
     }
   }
+  bzero(log_message, sizeof(log_message));
+  sprintf(log_message, "## SOCK COMM ## Exiting the sock comm thread(task). I received an exit request");
+  fprintf(log_file, "%s\n", log_message);
+  pthread_join(sock_comm_heartbeat_notifier_desc, NULL);
+  pthread_exit(0);
 }
 
 void *sock_comm_heartbeat_notifier(void *args)
@@ -124,7 +129,7 @@ void *sock_comm_heartbeat_notifier(void *args)
   sock_comm_heartbeat.sender_id = SOCK_COMM_TASK_ID;
   sock_comm_heartbeat.heartbeat_status = true;
 
-  while(1)
+  while(!close_app)
   {
     sem_wait(&sem_sock_comm);
 
@@ -140,4 +145,5 @@ void *sock_comm_heartbeat_notifier(void *args)
         send_heartbeat[SOCK_COMM_TASK_ID] = false;
     }
   }
+  pthread_exit(0);
 }
