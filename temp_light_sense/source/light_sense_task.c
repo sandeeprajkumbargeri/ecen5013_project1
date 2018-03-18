@@ -102,7 +102,7 @@ void *light_sense_task_thread(void *args)
   }
 
   bzero(log_message, sizeof(log_message));
-  sprintf(log_message, "## LIGHT ## Successfully configured the light sensor.");
+  sprintf(log_message, "## LIGHT ## Successfully configured the light sensor. Ready for notifying heartbeat.");
   LOG(mq_logger, log_message);
 
   while(1)

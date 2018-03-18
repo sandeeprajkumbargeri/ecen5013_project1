@@ -1,0 +1,10 @@
+Sun Mar 18 03:15:24 2018 :: ## MAIN ## Successfully setup message queues.
+Sun Mar 18 03:15:24 2018 :: ## MAIN ## Successfully setup semaphores.
+Sun Mar 18 03:15:24 2018 :: ## MAIN ## Successfully setup timer with 1 sec 0 msec expiry time.
+Sun Mar 18 03:15:24 2018 :: ## TEMP ## Successfully configured temperature sensor. Ready for notifying heartbeat.
+Sun Mar 18 03:15:24 2018 :: ## LIGHT ## Successfully configured the light sensor. Ready for notifying heartbeat.
+Sun Mar 18 03:15:24 2018 :: ## MAIN ## Successfully created all the threads.
+Sun Mar 18 03:15:25 2018 :: ########################## MAIN ##########################
+Startup Tests are beginning.
+
+Sun Mar 18 03:15:25 2018 :: ## MAIN ## Temperature Sensor: Startup Succesful.

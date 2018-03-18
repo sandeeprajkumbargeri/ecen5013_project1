@@ -16,10 +16,10 @@ void *logger_task_thread(void *args)
 
   bzero(log_info, sizeof(log_info));
 
-  if(mq_send(mq_heartbeat, (char *) &logger_heartbeat, sizeof(logger_heartbeat), 1)<0)
+  if(mq_send(mq_heartbeat, (char *) &logger_heartbeat, sizeof(logger_heartbeat), 1) < 0)
   {
     bzero(log_message, sizeof(log_message));
-    sprintf(log_message, "## LOGGER ## Unable to send heartbeat. %s", strerror(errno));
+    sprintf(log_message, "## LOGGER ## Unable to send startup heartbeat. %s", strerror(errno));
     LOG(mq_logger, log_message);
   }
 

@@ -220,7 +220,7 @@ int apds_9301_write_thresh_low_reg(int i2c_bus_desc, uint16_t thresh_low_reg)
                 return retval;
         }
 
-        printf("\nlower Byte%02x HigherByte %02x\n", buf[1], buf[2]);
+        //printf("\nlower Byte%02x HigherByte %02x\n", buf[1], buf[2]);
 
         return retval;
 }
@@ -240,7 +240,7 @@ int32_t apds_9301_read_thresh_high_reg(int i2c_bus_desc)
                 return retval;
         }
 
-        printf("\nlower Byte%02x HigherByte %02x\n", buf[0], buf[1]);
+        //printf("\nlower Byte%02x HigherByte %02x\n", buf[0], buf[1]);
 
         thresh_high_reg = (uint16_t)buf[0] + (uint16_t)buf[1]<<8;     //Calculates ADC channel output using ADC Data Low Register and ADC Data High Register
 
@@ -262,7 +262,7 @@ int apds_9301_write_thresh_high_reg(int i2c_bus_desc, uint16_t thresh_high_reg)
                 return retval;
         }
 
-        printf("\nlower Byte%02x HigherByte %02x\n", buf[1], buf[2]);
+        //printf("\nlower Byte%02x HigherByte %02x\n", buf[1], buf[2]);
 
         return retval;
 }
@@ -285,7 +285,7 @@ int32_t apds_9301_read_adcn(int i2c_bus_desc, int adc_channel_number)
 		return adcn_channel_out;
 	}
 
-	printf("\nlower Byte%02x\tHigherByte %02x\n", buf[0], buf[1]);
+	//printf("\nlower Byte%02x\tHigherByte %02x\n", buf[0], buf[1]);
 
 	adcn_channel_out = (uint16_t)buf[0] + (uint16_t)buf[1]<<8;     //Calculates ADC channel output using ADC Data Low Register and ADC Data High Register
 

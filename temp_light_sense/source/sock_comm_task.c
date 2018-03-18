@@ -17,9 +17,8 @@ void *sock_comm_task_thread(void *args)
   pthread_t sock_comm_heartbeat_notifier_desc;
 
   bzero(&sock_comm_heartbeat, sizeof(sock_comm_heartbeat));
-  sock_comm_heartbeat.sender_id = LOGGER_TASK_ID;
+  sock_comm_heartbeat.sender_id = SOCK_COMM_TASK_ID;
   sock_comm_heartbeat.heartbeat_status = true;
-
 
   remote_sock = socket(AF_UNIX, SOCK_DGRAM, 0);     //create a datagram socket
 
@@ -42,9 +41,11 @@ void *sock_comm_task_thread(void *args)
   strncpy(remote_sockaddr.sun_path, sockaddr_path, sizeof(remote_sockaddr.sun_path) -1);
 
   if(bind(remote_sock, (struct sockaddr *) &remote_sockaddr, sizeof(struct sockaddr_un)) < 0)
-  bzero(log_message, sizeof(log_message));
-  sprintf(log_message, "## SOCK COMM ## Bind failed. %s", strerror(errno));
-  LOG(mq_logger, log_message);
+  {
+    bzero(log_message, sizeof(log_message));
+    sprintf(log_message, "## SOCK COMM ## Bind failed. %s", strerror(errno));
+    LOG(mq_logger, log_message);
+  }
 
   if(mq_send(mq_heartbeat, (char *) &sock_comm_heartbeat, sizeof(sock_comm_heartbeat), 1) < 0)
   {
@@ -120,14 +121,14 @@ void *sock_comm_heartbeat_notifier(void *args)
   char log_message[128];
 
   bzero(&sock_comm_heartbeat, sizeof(sock_comm_heartbeat));
-  sock_comm_heartbeat.sender_id = LOGGER_TASK_ID;
+  sock_comm_heartbeat.sender_id = SOCK_COMM_TASK_ID;
   sock_comm_heartbeat.heartbeat_status = true;
 
   while(1)
   {
-    sem_wait(&sem_logger);
+    sem_wait(&sem_sock_comm);
 
-    if(send_heartbeat[LOGGER_TASK_ID])
+    if(send_heartbeat[SOCK_COMM_TASK_ID])
     {
         if(mq_send(mq_heartbeat, (char *) &sock_comm_heartbeat, sizeof(sock_comm_heartbeat), 1) < 0)
         {
@@ -136,7 +137,7 @@ void *sock_comm_heartbeat_notifier(void *args)
           LOG(mq_logger, log_message);
         }
 
-        send_heartbeat[LOGGER_TASK_ID] = false;
+        send_heartbeat[SOCK_COMM_TASK_ID] = false;
     }
   }
 }

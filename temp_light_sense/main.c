@@ -207,7 +207,7 @@ bool task_heartbeat[4] = {false};
 bool send_heartbeat[4] = {true};
 
 char task_name[4][30];
-char filename[20];
+char filename[30];
 
 struct sigevent heartbeat_sevp;
 
@@ -242,6 +242,16 @@ int main (int argc, char *argv[])
   }
 
 	fclose(log_file);
+
+	for (int i = 0; i < 4; i++)
+	{
+		task_alive[i] = true;
+		task_heartbeat[i] = false;
+		send_heartbeat[i] = true;
+	}
+
+	sensor_alive[0] = false;
+	sensor_alive[1] = false;
 
 	setup_mq();
 	bzero(log_message, sizeof(log_message));
@@ -285,7 +295,6 @@ int main (int argc, char *argv[])
 	LOG(mq_logger, log_message);
 
 	startup_tests(mq_heartbeat, task_heartbeat, sensor_alive);
-
 
 	tspec.it_value.tv_sec = TIMER_EXPIRY_S;
 	tspec.it_value.tv_nsec = TIMER_EXPIRY_MS *1000000;

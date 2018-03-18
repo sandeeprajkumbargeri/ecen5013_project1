@@ -1,0 +1,12 @@
+Sun Mar 18 02:01:54 2018 :: ## MAIN ## Successfully setup message queues.
+Sun Mar 18 02:01:54 2018 :: ## MAIN ## Successfully setup semaphores.
+Sun Mar 18 02:01:54 2018 :: ## MAIN ## Successfully setup timer with 1 sec 0 msec expiry time.
+Sun Mar 18 02:01:54 2018 :: ## TEMP ## Successfully configured temperature sensor. Ready for notifying heartbeat.
+Sun Mar 18 02:01:54 2018 :: ## LIGHT ## Successfully configured the light sensor. Ready for notifying heartbeat.
+Sun Mar 18 02:01:54 2018 :: ## MAIN ## Successfully created all the threads.
+Sun Mar 18 02:01:55 2018 :: ## TEMP ## Recurring acquisition. Temperature: 26.5000
+Sun Mar 18 02:02:10 2018 :: ## LIGHT ## Recurring acquisition. Ambient Light Lux: 0.0000.
+Sun Mar 18 02:02:10 2018 :: ## MAIN ## Received heartbeat from Logger Task. Status: good.
+Sun Mar 18 02:02:30 2018 :: ## TEMP ## Recurring acquisition. Temperature: 26.5000
+Sun Mar 18 02:02:30 2018 :: ## MAIN ## Received heartbeat from Temperature Sesnor Task. Status: good.
+Sun Mar 18 02:02:30 2018 :: ## TEMP ## Recurring acquisition. Temperature: 26.5000

@@ -45,7 +45,7 @@
 #define LIGHT_TASK_NAME		"Light Sensor Task"
 #define TEMP_TASK_NAME		"Temperature Sesnor Task"
 #define LOGGER_TASK_NAME	"Logger Task"
-#define SOCK_COMM_TASK_NAME	"Socket COmmunication Task"
+#define SOCK_COMM_TASK_NAME	"Socket Communication Task"
 
 #define CLOCK_ID                CLOCK_MONOTONIC
 #define TIMER_EXPIRY_S					1
@@ -67,7 +67,7 @@ extern bool light_asynch;
 
 extern struct sigevent heartbeat_sevp;
 
-extern char filename[20];
+extern char filename[30];
 
 extern sem_t sem_light, sem_temp, sem_logger, sem_sock_comm;
 extern mqd_t mq_light, mq_temp, mq_logger, mq_sock_comm, mq_heartbeat;

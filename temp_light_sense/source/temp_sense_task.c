@@ -66,11 +66,12 @@ void *temp_sense_task_thread(void *args)
 	temp_heartbeat.sender_id = TEMP_TASK_ID;
 	temp_heartbeat.heartbeat_status = true;
 
-       	if(mq_send(mq_heartbeat, (char *) &temp_heartbeat, sizeof(temp_heartbeat), 1)<0)
-        {
-        	perror("\nTEMP TASK: Unable to send heartbeat");
-        }
-
+ 	if(mq_send(mq_heartbeat, (char *) &temp_heartbeat, sizeof(temp_heartbeat), 1) < 0)
+  {
+		bzero(log_message, sizeof(log_message));
+		sprintf(log_message, "## TEMP ## Unable to send heartbeat.");
+		LOG(mq_logger, log_message);
+  }
 
 	bzero(log_message, sizeof(log_message));
 	sprintf(log_message, "## TEMP ## Successfully configured temperature sensor. Ready for notifying heartbeat.");
@@ -79,23 +80,22 @@ void *temp_sense_task_thread(void *args)
 	while(1)
 	{
 		sem_wait(&sem_temp);
-  		sem_post(&sem_temp);
+  	sem_post(&sem_temp);
 
 		if(temp_read == true)
 		{
-
 			sem_wait(&sem_temp);
-  			temp_read = false;
-		        retval = i2c_bus_access(i2c_bus_desc, SLAVE_ADDRESS_TMP);
-  			retval = tmp_102_read_temperature_reg(i2c_bus_desc, &temperature);
-		        i2c_bus_free();
+  		temp_read = false;
+		  retval = i2c_bus_access(i2c_bus_desc, SLAVE_ADDRESS_TMP);
+  		retval = tmp_102_read_temperature_reg(i2c_bus_desc, &temperature);
+			i2c_bus_free();
 
-  			if(retval > 0)
-					{
-						bzero(log_message, sizeof(log_message));
-						sprintf(log_message, "## TEMP ## Recurring acquisition. Temperature: %2.4f", temperature);
-						LOG(mq_logger, log_message);
-					}
+			if(retval > 0)
+			{
+				bzero(log_message, sizeof(log_message));
+				sprintf(log_message, "## TEMP ## Recurring acquisition. Temperature: %2.4f", temperature);
+				LOG(mq_logger, log_message);
+			}
 
 			if(send_heartbeat[TEMP_TASK_ID])
 			{
