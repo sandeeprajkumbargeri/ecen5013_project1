@@ -45,4 +45,4 @@
 #define COMMAND_LIGHT_SET_INT_TRSHLD_HIGH     0x1D
 
 void *sock_comm_task_thread(void *);
-void errExit(char *);
+void *sock_comm_heartbeat_notifier(void *);

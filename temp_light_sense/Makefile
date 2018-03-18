@@ -4,8 +4,8 @@ CC=gcc
 CFLAGS=-g -lm -lpthread -lrt
 RFLAGS=-rf
 
-execute: main.o i2c_wrapper.o apds_9301_driver.o tmp_102_driver.o temp_sense_task.o light_sense_task.o sock_comm_task.o logger_task.o
-	$(CC) -o execute main.o i2c_wrapper.o apds_9301_driver.o tmp_102_driver.o temp_sense_task.o light_sense_task.o sock_comm_task.o logger_task.o $(CFLAGS)
+execute: main.o i2c_wrapper.o apds_9301_driver.o tmp_102_driver.o temp_sense_task.o light_sense_task.o sock_comm_task.o logger_task.o startup_tests.o
+	$(CC) -o execute main.o i2c_wrapper.o apds_9301_driver.o tmp_102_driver.o temp_sense_task.o light_sense_task.o sock_comm_task.o logger_task.o startup_tests.o $(CFLAGS)
 
 i2c_wrapper.o: $(SDIR)i2c_wrapper.c $(IDIR)i2c_wrapper.h main.h $(IDIR)logger_task.h
 	$(CC) -c -g $(SDIR)i2c_wrapper.c
@@ -25,6 +25,8 @@ sock_comm_task.o: $(SDIR)sock_comm_task.c $(IDIR)sock_comm_task.h main.h $(IDIR)
 	$(CC) -c -g $(SDIR)sock_comm_task.c
 logger_task.o: $(SDIR)logger_task.c $(IDIR)logger_task.h main.h $(IDIR)logger_task.h
 	$(CC) -c -g $(SDIR)logger_task.c
+startup_tests.o: startup_tests.c startup_tests.h $(IDIR)apds_9301_driver.h $(IDIR)tmp_102_driver.h
+	$(CC) -c -g startup_tests.c
 
 
 main.o: main.c $(IDIR)i2c_wrapper.h $(IDIR)apds_9301_driver.h $(IDIR)tmp_102_driver.h main.h $(IDIR)logger_task.h

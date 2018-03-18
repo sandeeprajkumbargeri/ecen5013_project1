@@ -198,7 +198,7 @@ int32_t apds_9301_read_thresh_low_reg(int i2c_bus_desc)
                 return retval;
         }
 
-        printf("\nlower Byte%02x HigherByte %02x\n", buf[0], buf[1]);
+        //printf("\nlower Byte%02x HigherByte %02x\n", buf[0], buf[1]);
 
         thresh_low_reg = (uint16_t)buf[0] + (uint16_t)buf[1]<<8;     //Calculates ADC channel output using ADC Data Low Register and ADC Data High Register
 
@@ -241,9 +241,9 @@ int32_t apds_9301_read_thresh_high_reg(int i2c_bus_desc)
         }
 
         printf("\nlower Byte%02x HigherByte %02x\n", buf[0], buf[1]);
-        
+
         thresh_high_reg = (uint16_t)buf[0] + (uint16_t)buf[1]<<8;     //Calculates ADC channel output using ADC Data Low Register and ADC Data High Register
- 
+
         return (int32_t)thresh_high_reg;
 }
 
@@ -253,7 +253,7 @@ int apds_9301_write_thresh_high_reg(int i2c_bus_desc, uint16_t thresh_high_reg)
         uint8_t buf[3];
 
         buf[0] = COMMAND_BYTE|THRESHHIGHLOW_REGISTER|WORD_MODE;                 //Selects ADC0 if adc_number is 0 ad ADC1 if adc_number is 1
-        buf[1] = (uint8_t )0xFF00^thresh_high_reg;                         //Obtaining lower byte 
+        buf[1] = (uint8_t )0xFF00^thresh_high_reg;                         //Obtaining lower byte
         buf[2] = (uint8_t )thresh_high_reg>>8;			           //Obtaining higher byte
         retval = i2c_bus_write(i2c_bus_desc, buf[0], buf+1, 2);
         if(retval < 0)
@@ -275,7 +275,7 @@ int32_t apds_9301_read_adcn(int i2c_bus_desc, int adc_channel_number)
 	uint8_t buf[3], buf1[2];
 
 	buf[0] = COMMAND_BYTE|(DATA0LOW_REGISTER+2*adc_channel_number)|WORD_MODE;                 //Selects ADC0 if adc_number is 0 ad ADC1 if adc_number is 1
-	
+
 //	printf("Address of ADC%d register %hhu", adc_channel_number, buf[0]);
 
 	adcn_channel_out = i2c_bus_read(i2c_bus_desc, buf[0], buf, 2);
@@ -291,5 +291,3 @@ int32_t apds_9301_read_adcn(int i2c_bus_desc, int adc_channel_number)
 
 	return adcn_channel_out;
 }
-
-

@@ -1,5 +1,7 @@
-#include "../include/sock_comm_task.h"
 #include "../main.h"
+#include "../include/sock_comm_task.h"
+#include "../include/logger_task.h"
+#include <errno.h>
 
 
 void *sock_comm_task_thread(void *args)
@@ -10,11 +12,23 @@ void *sock_comm_task_thread(void *args)
   struct sockaddr_un app_sockaddr, remote_sockaddr;
   socklen_t sockaddr_length;
   mq_temp_light_payload_t request;
+  mq_payload_heartbeat_t sock_comm_heartbeat;
+  char log_message[128];
+  pthread_t sock_comm_heartbeat_notifier_desc;
+
+  bzero(&sock_comm_heartbeat, sizeof(sock_comm_heartbeat));
+  sock_comm_heartbeat.sender_id = LOGGER_TASK_ID;
+  sock_comm_heartbeat.heartbeat_status = true;
+
 
   remote_sock = socket(AF_UNIX, SOCK_DGRAM, 0);     //create a datagram socket
 
   if(remote_sock < 0)
-    errExit("## ERROR ## Creating Socket: ");
+  {
+    bzero(log_message, sizeof(log_message));
+    sprintf(log_message, "## SOCK COMM ## Error Creating Socket. %s", strerror(errno));
+    LOG(mq_logger, log_message);
+  }
 
   bzero(sockaddr_path, sizeof(sockaddr_path));
   sprintf(sockaddr_path, "/tmp/temp_light_sense_socket");
@@ -28,19 +42,42 @@ void *sock_comm_task_thread(void *args)
   strncpy(remote_sockaddr.sun_path, sockaddr_path, sizeof(remote_sockaddr.sun_path) -1);
 
   if(bind(remote_sock, (struct sockaddr *) &remote_sockaddr, sizeof(struct sockaddr_un)) < 0)
-    errExit("## ERROR ## Bind: ");
+  bzero(log_message, sizeof(log_message));
+  sprintf(log_message, "## SOCK COMM ## Bind failed. %s", strerror(errno));
+  LOG(mq_logger, log_message);
+
+  if(mq_send(mq_heartbeat, (char *) &sock_comm_heartbeat, sizeof(sock_comm_heartbeat), 1) < 0)
+  {
+    bzero(log_message, sizeof(log_message));
+    sprintf(log_message, "## SOCK COMM ## Unable to send heartbeat. %s", strerror(errno));
+    LOG(mq_logger, log_message);
+  }
+
+  pthread_create(&sock_comm_heartbeat_notifier_desc, NULL, sock_comm_heartbeat_notifier, (void *) NULL);
 
   while(1)
   {
     bzero(&request, sizeof(request));
 
     if(recvfrom(remote_sock, (void *) &request, sizeof(request), 0, (struct sockaddr *) &app_sockaddr, &sockaddr_length) < 0)
-      errExit("## ERROR ## Receiving request from app: ");
+    {
+      bzero(log_message, sizeof(log_message));
+      sprintf(log_message, "## SOCK COMM ## Error receiving request from external application. %s", strerror(errno));
+      LOG(mq_logger, log_message);
+    }
+
+    bzero(log_message, sizeof(log_message));
+    sprintf(log_message, "## SOCK COMM ## Received request from external application. %s", strerror(errno));
+    LOG(mq_logger, log_message);
 
     if(request.command > 0x00 && request.command < 0x10)
     {
       if(mq_send(mq_temp, (const char *) &request, sizeof(mq_temp_light_payload_t), 0) < 0)
-        errExit("Error Sending Request to Temp Task");
+      {
+        bzero(log_message, sizeof(log_message));
+        sprintf(log_message, "## SOCK COMM ## Error sending request to temp task. %s", strerror(errno));
+        LOG(mq_logger, log_message);
+      }
 
       temp_asynch = true;
       sem_post(&sem_temp);
@@ -48,83 +85,58 @@ void *sock_comm_task_thread(void *args)
 
     if(request.command > 0x0F && request.command < 0x1E)
     {
-      printf("\nFile descriptor for light is %d\n", mq_light);
       if(mq_send(mq_light, (const char *) &request, sizeof(mq_temp_light_payload_t), 0) < 0)
-        errExit("Error Sending Request to Light Task");
+      {
+        bzero(log_message, sizeof(log_message));
+        sprintf(log_message, "## SOCK COMM ## Error sending request to light task. %s", strerror(errno));
+        LOG(mq_logger, log_message);
+      }
 
       light_asynch = true;
       sem_post(&sem_light);
-
     }
 
     bzero(response, sizeof(response));
 
     if(mq_receive(mq_sock_comm, (char *) response, sizeof(response), 0) < 0)
-      errExit("Error receiving response");
+    {
+      bzero(log_message, sizeof(log_message));
+      sprintf(log_message, "## SOCK COMM ## Error receiving response from temp/light task. %s", strerror(errno));
+      LOG(mq_logger, log_message);
+    }
 
     if(sendto(remote_sock, (const void *) response, sizeof(response), 0, (const struct sockaddr *) &app_sockaddr, sockaddr_length) < 0)
-      errExit("## ERROR ## Sending response to app: ");
+    {
+      bzero(log_message, sizeof(log_message));
+      sprintf(log_message, "## SOCK COMM ## Error sending response to external application. %s", strerror(errno));
+      LOG(mq_logger, log_message);
+    }
   }
 }
 
-//Function to print the error to STDOUT and exit.
-void errExit(char *strError)
+void *sock_comm_heartbeat_notifier(void *args)
 {
-  perror(strError);
-  exit(EXIT_FAILURE);
-}
+  mq_payload_heartbeat_t sock_comm_heartbeat;
+  char log_message[128];
 
+  bzero(&sock_comm_heartbeat, sizeof(sock_comm_heartbeat));
+  sock_comm_heartbeat.sender_id = LOGGER_TASK_ID;
+  sock_comm_heartbeat.heartbeat_status = true;
 
-/*i2c_request_t parse_request(comm_payload_t request)
-{
-  i2c_request_t parsed;
-  bzero(&parsed, sizeof(parsed));
-
-  switch(request.command)
+  while(1)
   {
-    case COMMAND_TEMP_READ_TLOW:
-        set_parsed_data(TEMP, READ, ADDRESS_TEMP_TLOW_REG, 0, 0);
-        break;
-    case COMMAND_TEMP_READ_THIGH:
-      set_parsed_data(TEMP, READ, ADDRESS_TEMP_THIGH_REG, 0, 0);
-      break;
-    case COMMAND_TEMP_READ_DATA_REG:
-      set_parsed_data(TEMP, READ, ADDRESS_TEMP_TEMP_REG, 0, 0);
-      break;
-    case COMMAND_TEMP_SET_SD_ON:
-      set_parsed_data(TEMP, WRITE, ADDRESS_TEMP_CONF_REG, 0x0100, OR);
-      break;
-    case COMMAND_TEMP_SET_SD_OFF:
-      set_parsed_data(TEMP, WRITE, ADDRESS_TEMP_CONF_REG, 0xFEFF, AND);
-      break;
-    case COMMAND_TEMP_READ_RESOLUTION:
-      set_parsed_data(TEMP, WRITE, ADDRESS_TEMP_CONF_REG, 0xFEFF, AND);
-      break;
-    case COMMAND_TEMP_READ_FAULT_BITS:
-    case COMMAND_TEMP_READ_EM:
-    case COMMAND_TEMP_SET_EM_ON:
-    case COMMAND_TEMP_SET_EM_OFF:
+    sem_wait(&sem_logger);
 
-    case COMMAND_TEMP_SET_CONV_RATE_0:
-    case COMMAND_TEMP_SET_CONV_RATE_1:
-    case COMMAND_TEMP_SET_CONV_RATE_2:
-    case COMMAND_TEMP_SET_CONV_RATE_3:
-    case COMMAND_TEMP_READ_CONV_RATE:
+    if(send_heartbeat[LOGGER_TASK_ID])
+    {
+        if(mq_send(mq_heartbeat, (char *) &sock_comm_heartbeat, sizeof(sock_comm_heartbeat), 1) < 0)
+        {
+          bzero(log_message, sizeof(log_message));
+          sprintf(log_message, "## SOCK COMM ## Unable to send heartbeat. %s", strerror(errno));
+          LOG(mq_logger, log_message);
+        }
 
-
-    case COMMAND_LIGHT_SET_INTG_TIME_0:
-    case COMMAND_LIGHT_SET_INTG_TIME_1:
-    case COMMAND_LIGHT_SET_INTG_TIME_2:
-    case COMMAND_LIGHT_READ_INTG_TIME:
-    case COMMAND_LIGHT_READ_GAIN:
-    case COMMAND_LIGHT_SET_GAIN_HIGH:
-    case COMMAND_LIGHT_SET_GAIN_LOW:
-    case COMMAND_LIGHT_SET_INT_ENABLE:
-    case COMMAND_LIGHT_SET_INT_DISABLE:
-    case COMMAND_LIGHT_READ_IDENTIFY_REG:
-    case COMMAND_LIGHT_READ_INT_TRSHLD_LOW:
-    case COMMAND_LIGHT_READ_INT_TRSHLD_HIGH:
-    case COMMAND_LIGHT_SET_INT_TRSHLD_LOW:
-    case COMMAND_LIGHT_SET_INT_TRSHLD_HIGH:
+        send_heartbeat[LOGGER_TASK_ID] = false;
+    }
   }
-}*/
+}

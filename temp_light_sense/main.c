@@ -1,3 +1,4 @@
+#include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -20,7 +21,6 @@
 #include <pthread.h>
 #include <semaphore.h>
 
-
 #include "include/i2c_wrapper.h"
 #include "include/apds_9301_driver.h"
 #include "include/tmp_102_driver.h"
@@ -28,105 +28,8 @@
 #include "include/temp_sense_task.h"
 #include "include/logger_task.h"
 #include "include/sock_comm_task.h"
+#include "startup_tests.h"
 
-//int bus_number = 2;
-/*
-int main()
-{
-	uint16_t word;
-	int32_t adc0, adc1;
-	int16_t timing_reg, control_reg, id_reg, thresh_low_reg, thresh_high_reg;
-	char filename[20];
-	int i2c_bus_desc;
-	int retval, regaddr;
-	uint8_t buf[10];
-
-	float ambient_lux;
-
-	regaddr = 0x52;
-
-	i2c_bus_desc = i2c_bus_init(bus_number);
-
-	if(i2c_bus_desc < 0)
-	{
-		printf("Error opening a i2c character device file: %s", strerror(errno));
-		return 1;
-	}
-
-	apds_9301_init(i2c_bus_desc);
-	usleep(100000);
-//	while(1)
-//	{
-	adc0 = apds_9301_read_adcn(i2c_bus_desc, ADC_CHANNEL_0);
-
-	if(adc0 < 0)
-	{
-		printf("Error in reading ADC Channel 0 register\n");
-	}
-	else
-		printf("Output of ADC Channel 0:%d\n", (int)adc0);
-
-	adc1 = apds_9301_read_adcn(i2c_bus_desc, ADC_CHANNEL_1);
-	if(adc1 < 0)
-	{
-		printf("Error in reading ADC Channel 1 register\n");
-	}
-	else
-		printf("Output of ADC Channel 1: %d\n", (int)adc1);
-	//usleep(1000000);
-//	}
-
-	ambient_lux = calculate_ambient_lux((uint16_t)adc0, (uint16_t)adc1);
-
-	printf("The Ambient Light is lux is %f", ambient_lux);
-
-	printf("\nTiming Register:%02x", (uint8_t )apds_9301_read_timing_reg(i2c_bus_desc));
-
-	printf("\n Control Register: %02x", (uint8_t)apds_9301_read_control_reg(i2c_bus_desc));
-
-	printf("\n Id Register: %02x", (uint8_t)apds_9301_read_id_reg(i2c_bus_desc));
-	printf("\n Threshold Low Register: %04x", (uint16_t)apds_9301_read_thresh_low_reg(i2c_bus_desc));
-	printf("\n Threshold High Register: %04x", (uint16_t)apds_9301_read_thresh_high_reg(i2c_bus_desc));
-
-	apds_9301_shutdown(i2c_bus_desc);
-
-
-/*	retval = i2c_bus_access(i2c_bus_desc, 0x39);
-
-	if(retval < 0)
-	{
-		printf("Error accessing I2C slave device; %s", strerror(errno));
-		return 1;
-	}*/
-
-/*
-	buf[0] =  0x01|0x80;   //Sending a command byte saying i want to access address 0x00 register
-	buf[1] = 0x03;         //Data being written
-
-	retval = i2c_bus_read(i2c_bus_desc, buf[0], buf, 1);
-
-        if(retval < 0)
-        {
-        	printf("Error writing I2C slave device; %s", strerror(errno));
-                return 1;
-        }
-	printf("\n\n%hhu%hhu\n", buf[1], buf[0]);*/
-
-/*	retval = i2c_bus_read(i2c_bus_desc, buf[0], buf, 1);
-
-        if(retval < 0)
-        {
-        	printf("Error reading from I2C slave device; %s", strerror(errno));
-                return 1;
-        }
-
-	printf("\n\n%d\n", (int )buf[1]);*/
-/*	close(i2c_bus_desc);
-
-	return 0;
-
-}
-*/
 /*
 int bus_number = 2;
 #include "include/tmp_102_driver.h"
@@ -288,8 +191,6 @@ int main()
 }
 */
 
-#include "main.h"
-
 pthread_t logger_task;
 pthread_t temp_sense_task;
 pthread_t light_sense_task;
@@ -300,6 +201,7 @@ bool temp_read = false;
 bool temp_asynch = false;
 bool light_asynch = false;
 
+bool sensor_alive[2] = {false};
 bool task_alive[4] = {true};
 bool task_heartbeat[4] = {false};
 bool send_heartbeat[4] = {true};
@@ -323,31 +225,37 @@ int main (int argc, char *argv[])
 	mq_payload_heartbeat_t heartbeat;
 	char log_message[128] = {0};
 
-
 	if (argc != 2)
   {
     printf ("USAGE: %s <log filename>\n", argv[0]);
     exit(1);
   }
- 
+
 	bzero(filename, sizeof(filename));
 	strcpy(filename, argv[1]);
   //Open the log file in the write mode
-//  log_file = fopen(argv[1], "w");
-/*  if(log_file == NULL)
+  log_file = fopen(argv[1], "w");
+	if(log_file == NULL)
   {
     printf ("\n## ERROR ## Cannot create the file \"%s\". Exiting.\n", argv[1]);
     exit(1);
   }
-*/
-	//fclose(log_file);
+
+	fclose(log_file);
 
 	setup_mq();
+	bzero(log_message, sizeof(log_message));
+	strcpy(log_message, "## MAIN ## Successfully setup message queues.");
+	LOG(mq_logger, log_message);
 
 	sem_init(&sem_logger, 0, 0);
 	sem_init(&sem_light, 0, 0);
 	sem_init(&sem_temp, 0, 0);
 	sem_init(&sem_sock_comm, 0, 0);
+
+	bzero(log_message, sizeof(log_message));
+	strcpy(log_message, "## MAIN ## Successfully setup semaphores.");
+	LOG(mq_logger, log_message);
 
 	//Set the timer configuration
 	sevp.sigev_notify = SIGEV_THREAD;
@@ -362,14 +270,10 @@ int main (int argc, char *argv[])
 	strcpy(task_name[3], SOCK_COMM_TASK_NAME);
 
 	//Set the timer value to 500ms
-	tspec.it_value.tv_sec = 0;
-	tspec.it_value.tv_nsec = TIMER_EXPIRY_MS *1000000;
-	tspec.it_interval.tv_sec = 0;
-	tspec.it_interval.tv_nsec = TIMER_EXPIRY_MS *1000000;
 
-	//Timer creation and setting alarm
-	timer_create(CLOCK_ID, &sevp, &timer_id);
-	timer_settime(timer_id, 0, &tspec, 0);
+	bzero(log_message, sizeof(log_message));
+	sprintf(log_message, "## MAIN ## Successfully setup timer with %u sec %u msec expiry time.", TIMER_EXPIRY_S, TIMER_EXPIRY_MS);
+	LOG(mq_logger, log_message);
 
 	pthread_create(&logger_task, NULL, logger_task_thread, (void *) &thread_args);
 	pthread_create(&temp_sense_task, NULL, temp_sense_task_thread, (void *) &thread_args);
@@ -377,29 +281,46 @@ int main (int argc, char *argv[])
 	pthread_create(&sock_comm_task, NULL, sock_comm_task_thread, (void *) &thread_args);
 
 	bzero(log_message, sizeof(log_message));
-	strcpy(log_message, "Main created all the threads");
+	strcpy(log_message, "## MAIN ## Successfully created all the threads.");
+	LOG(mq_logger, log_message);
 
-	if(mq_send(mq_logger, (const char *) log_message, sizeof(log_message), 0) < 0)
-		perror("Error Sending Request to Temp Task");
+	startup_tests(mq_heartbeat, task_heartbeat, sensor_alive);
+
+
+	tspec.it_value.tv_sec = TIMER_EXPIRY_S;
+	tspec.it_value.tv_nsec = TIMER_EXPIRY_MS *1000000;
+	tspec.it_interval.tv_sec = TIMER_EXPIRY_S;
+	tspec.it_interval.tv_nsec = TIMER_EXPIRY_MS *1000000;
+
+	//Timer creation and setting alarm
+	timer_create(CLOCK_ID, &sevp, &timer_id);
+	timer_settime(timer_id, 0, &tspec, 0);
+
 
 	while(1)
 	{
 		retval = mq_receive(mq_heartbeat, (char *) &heartbeat, sizeof(heartbeat), NULL);
 
 		if(retval > 0)
+		{
 			task_heartbeat[heartbeat.sender_id] = heartbeat.heartbeat_status;
+
+			bzero(log_message, sizeof(log_message));
+			sprintf(log_message, "## MAIN ## Received heartbeat from %s. Status: %s.", task_name[(uint8_t) heartbeat.sender_id], heartbeat.heartbeat_status? "good":"bad");
+			LOG(mq_logger, log_message);
 		}
+	}
 }
 
 
 void timer_expiry_handler(union sigval arg)
 {
 	static uint8_t count = 0;
+	char log_message[128] = {0};
 
 	if(count % 2 == 0)
 	{
 		count++;
-		printf("Hello world\n");
 		temp_read = true;
 		sem_post(&sem_temp);
 		sem_post(&sem_logger);
@@ -423,14 +344,21 @@ void timer_expiry_handler(union sigval arg)
 			{
 				if(task_heartbeat[i])
 				{
-					printf("\n\n\n\n\n%s is still Alive\n", task_name[i]);
+					bzero(log_message, sizeof(log_message));
+					sprintf(log_message, "## MAIN ## %s is still alive.", task_name[i]);
+					LOG(mq_logger, log_message);
+
 					send_heartbeat[i] = true;
 					task_alive[i] = true;
 				}
+
 				else
 				{
 					task_alive[i] = false;
-					printf("\n\n\n\n\n%s is dead. There is no heartbeat on it.\n", task_name[i]);
+
+					bzero(log_message, sizeof(log_message));
+					sprintf(log_message, "## MAIN ## %s is dead. Failed to provide its heartbeat.", task_name[i]);
+					LOG(mq_logger, log_message);
 				}
 			}
 		}

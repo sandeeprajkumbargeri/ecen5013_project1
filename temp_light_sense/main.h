@@ -48,14 +48,15 @@
 #define SOCK_COMM_TASK_NAME	"Socket COmmunication Task"
 
 #define CLOCK_ID                CLOCK_MONOTONIC
-#define TIMER_EXPIRY_MS         500
+#define TIMER_EXPIRY_S					1
+#define TIMER_EXPIRY_MS         0
 
 extern pthread_t logger_task;
 extern pthread_t temp_sense_task;
 extern pthread_t light_sense_task;
 extern pthread_t sock_comm_task;
 
-extern bool task_alive[4], task_heartbeat[4], send_heartbeat[4];
+extern bool task_alive[4], task_heartbeat[4], send_heartbeat[4], sensor_alive[2];
 extern char task_name[4][30];
 
 
